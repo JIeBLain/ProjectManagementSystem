@@ -25,7 +25,7 @@ public class Employee
     public DateTime BirthDate { get; set; }
 
     [Required(ErrorMessage = "Gender is a required field.")]
-    public Gender? Gender { get; set; }
+    public Gender Gender { get; set; }
 
     [EmailAddress]
     public string? Email { get; set; }
