@@ -17,15 +17,16 @@ public class Project
     [Required(ErrorMessage = "Priority is a required field.")]
     public int Priority { get; set; }
 
-    public int? ProjectManagerId { get; set; }
+    [ForeignKey("ProjectManager")]
+    public Guid? ProjectManagerId { get; set; }
     public Employee? ProjectManager { get; set; }
 
     [ForeignKey("CustomerCompany")]
-    public int? CustomerCompanyId { get; set; }
+    public Guid? CustomerCompanyId { get; set; }
     public Company? CustomerCompany { get; set; }
 
     [ForeignKey("ContractorCompany")]
-    public int? ContractorCompanyId { get; set; }
+    public Guid? ContractorCompanyId { get; set; }
     public Company? ContractorCompany { get; set; }
 
     public ICollection<Employee>? Employees { get; set; }
