@@ -15,4 +15,10 @@ public class ProjectRepository : RepositoryBase<Project>, IProjectRepository
             .OrderBy(p => p.Name)
             .ToList();
     }
+
+    public Project GetProject(Guid projectId, bool trackChanges)
+    {
+        return FindByCondition(p => p.Id.Equals(projectId), trackChanges)
+            .SingleOrDefault();
+    }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Contracts;
+using Entities.Exceptions;
 using Service.Contracts;
 using Shared.DataTransferObjects;
 
@@ -20,16 +21,19 @@ internal sealed class ProjectService : IProjectService
 
     public IEnumerable<ProjectDto> GetAllProjects(bool trackChanges)
     {
-        try
-        {
-            var projects = _repository.Project.GetAllProjects(trackChanges);
-            var projectsDto = _mapper.Map<IEnumerable<ProjectDto>>(projects);
-            return projectsDto;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"Something went wrong in the {nameof(GetAllProjects)} service method {ex}");
-            throw;
-        }
+        var projects = _repository.Project.GetAllProjects(trackChanges);
+        var projectsDto = _mapper.Map<IEnumerable<ProjectDto>>(projects);
+        return projectsDto;
+    }
+
+    public ProjectDto GetProject(Guid id, bool trackChanges)
+    {
+        var project = _repository.Project.GetProject(id, trackChanges);
+
+        if (project is null)
+            throw new ProjectNotFoundException(id);
+
+        var projectDto = _mapper.Map<ProjectDto>(project);
+        return projectDto;
     }
 }

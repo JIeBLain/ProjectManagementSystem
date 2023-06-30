@@ -17,15 +17,14 @@ public class ProjectsController : ControllerBase
     [HttpGet]
     public IActionResult GetProjects()
     {
-        try
-        {
-            var projects = _service.ProjectService.GetAllProjects(trackChanges: false);
-            return Ok(projects);
-        }
-        catch (Exception)
-        {
+        var projects = _service.ProjectService.GetAllProjects(trackChanges: false);
+        return Ok(projects);
+    }
 
-            return StatusCode(500, "Internal server error");
-        }
+    [HttpGet("{id:guid}")]
+    public IActionResult GetProject(Guid id)
+    {
+        var project = _service.ProjectService.GetProject(id, trackChanges: false);
+        return Ok(project);
     }
 }
