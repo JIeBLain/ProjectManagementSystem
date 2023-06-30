@@ -1,6 +1,6 @@
 ﻿namespace Entities.Models;
 
-public class ProjectEmployees
+public class ProjectEmployee
 {
     public Guid ProjectId { get; set; }
     public Guid EmployeeId { get; set; }

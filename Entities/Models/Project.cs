@@ -26,5 +26,5 @@ public class Project
     public int Priority { get; set; }
     public Guid? ProjectManagerId { get; set; }
     public Employee? ProjectManager { get; set; }
-    public ICollection<ProjectEmployees>? ProjectEmployees { get; set; }
+    public ICollection<ProjectEmployee>? ProjectEmployees { get; set; }
 }

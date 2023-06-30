@@ -35,5 +35,5 @@ public class Employee
 
     public ICollection<Project>? ProjectManagerProjects { get; set; }
 
-    public ICollection<ProjectEmployees>? ProjectEmployees { get; set; }
+    public ICollection<ProjectEmployee>? ProjectEmployees { get; set; }
 }

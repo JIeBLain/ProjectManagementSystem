@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Repository.Configuration;
 
-public class ProjectEmployeeConfiguration : IEntityTypeConfiguration<ProjectEmployees>
+public class ProjectEmployeeConfiguration : IEntityTypeConfiguration<ProjectEmployee>
 {
-    public void Configure(EntityTypeBuilder<ProjectEmployees> builder)
+    public void Configure(EntityTypeBuilder<ProjectEmployee> builder)
     {
         builder.HasKey(pe => new { pe.ProjectId, pe.EmployeeId });
 
