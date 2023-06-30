@@ -11,23 +11,20 @@ public class Project
     [Required(ErrorMessage = "Project name is a required field.")]
     [MaxLength(60, ErrorMessage = "Maximum length for the Name is 60 characters.")]
     public string? Name { get; set; }
+
+    [Required(ErrorMessage = "The name of the customer's company is a required field.")]
+    [MaxLength(60, ErrorMessage = "Maximum length for the CustomerCompany is 60 characters.")]
+    public string? CustomerCompany { get; set; }
+
+    [Required(ErrorMessage = "The name of the contractor's company is a required field.")]
+    [MaxLength(60, ErrorMessage = "Maximum length for the ContractorCompany is 60 characters.")]
+    public string? ContractorCompany { get; set; }
     public DateTime? StartTime { get; set; }
     public DateTime? EndTime { get; set; }
 
     [Required(ErrorMessage = "Priority is a required field.")]
     public int Priority { get; set; }
-
-    [ForeignKey("ProjectManager")]
     public Guid? ProjectManagerId { get; set; }
     public Employee? ProjectManager { get; set; }
-
-    [ForeignKey("CustomerCompany")]
-    public Guid? CustomerCompanyId { get; set; }
-    public Company? CustomerCompany { get; set; }
-
-    [ForeignKey("ContractorCompany")]
-    public Guid? ContractorCompanyId { get; set; }
-    public Company? ContractorCompany { get; set; }
-
     public ICollection<Employee>? Employees { get; set; }
 }

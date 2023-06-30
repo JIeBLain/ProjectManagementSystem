@@ -32,8 +32,8 @@ public class Employee
 
     [Phone]
     public string? Phone { get; set; }
-    public ICollection<Project>? Projects { get; set; }
 
-    [InverseProperty("ProjectManager")]
-    public ICollection<Project>? ProjectManagerProjects { get; set; }
+    public ICollection<Project>? ProjectManagers { get; set; }
+
+    public ICollection<ProjectEmployees>? ProjectEmployees { get; set; }
 }
