@@ -27,4 +27,18 @@ public class ProjectsController : ControllerBase
         var project = _service.ProjectService.GetProject(id, trackChanges: false);
         return Ok(project);
     }
+
+    [HttpGet("{projectId:guid}/employees")]
+    public IActionResult GetEmployeesByProject(Guid projectId)
+    {
+        var employees = _service.EmployeeService.GetEmployeesByProject(projectId, trackChanges: false);
+        return Ok(employees);
+    }
+
+    [HttpGet("{projectId:guid}/employees/{employeeId:guid}")]
+    public IActionResult GetEmployeeByProject(Guid projectId, Guid employeeId)
+    {
+        var employee = _service.EmployeeService.GetEmployeeByProject(projectId, employeeId, trackChanges: false);
+        return Ok(employee);
+    }
 }

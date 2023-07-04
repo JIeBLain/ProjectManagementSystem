@@ -28,14 +28,14 @@ public class EmployeesController : ControllerBase
         return Ok(employee);
     }
 
-    [HttpGet("{employeeId}/projects")]
+    [HttpGet("{employeeId:guid}/projects")]
     public IActionResult GetProjectsByEmployee(Guid employeeId)
     {
         var projects = _service.ProjectService.GetProjectsByEmployee(employeeId, trackChanges: false);
         return Ok(projects);
     }
 
-    [HttpGet("{employeeId}/projects/{projectId}")]
+    [HttpGet("{employeeId:guid}/projects/{projectId:guid}")]
     public IActionResult GetProjectByEmployee(Guid employeeId, Guid projectId)
     {
         var project = _service.ProjectService.GetProjectByEmployee(employeeId, projectId, trackChanges: false);

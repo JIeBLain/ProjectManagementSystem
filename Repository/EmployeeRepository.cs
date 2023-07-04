@@ -21,4 +21,18 @@ public class EmployeeRepository : RepositoryBase<Employee>, IEmployeeRepository
         return FindByCondition(e => e.Id.Equals(employeeId), trackChanges)
             .SingleOrDefault();
     }
+
+    public Employee GetEmployeeByProject(Guid projectId, Guid employeeId, bool trackChanges)
+    {
+        return FindByCondition(e => e.ProjectEmployees.Any(pe => pe.ProjectId.Equals(projectId)), trackChanges)
+            .Where(e => e.Id.Equals(employeeId))
+            .SingleOrDefault();
+    }
+
+    public IEnumerable<Employee> GetEmployeesByProject(Guid projectId, bool trackChanges)
+    {
+        return FindByCondition(e => e.ProjectEmployees.Any(pe => pe.ProjectId.Equals(projectId)), trackChanges)
+            .OrderBy(e => e.LastName)
+            .ToList();
+    }
 }
