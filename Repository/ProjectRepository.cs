@@ -21,4 +21,11 @@ public class ProjectRepository : RepositoryBase<Project>, IProjectRepository
         return FindByCondition(p => p.Id.Equals(projectId), trackChanges)
             .SingleOrDefault();
     }
+
+    public IEnumerable<Project> GetProjects(Guid employeeId, bool trackChanges)
+    {
+        return FindByCondition(p => p.ProjectEmployees.Any(pe => pe.EmployeeId.Equals(employeeId)), trackChanges)
+            .OrderBy(p => p.Name)
+            .ToList();
+    }
 }

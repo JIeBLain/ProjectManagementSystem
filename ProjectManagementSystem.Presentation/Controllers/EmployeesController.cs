@@ -27,4 +27,11 @@ public class EmployeesController : ControllerBase
         var employee = _service.EmployeeService.GetEmployee(id, trackChanges: false);
         return Ok(employee);
     }
+
+    [HttpGet("{employeeId}/projects")]
+    public IActionResult GetProjectsByEmployee(Guid employeeId)
+    {
+        var project = _service.ProjectService.GetProjects(employeeId, trackChanges: false);
+        return Ok(project);
+    }
 }

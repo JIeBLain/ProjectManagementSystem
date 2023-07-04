@@ -36,4 +36,16 @@ internal sealed class ProjectService : IProjectService
         var projectDto = _mapper.Map<ProjectDto>(project);
         return projectDto;
     }
+
+    public IEnumerable<ProjectDto> GetProjects(Guid employeeId, bool trackChanges)
+    {
+        var employee = _repository.Employee.GetEmployee(employeeId, trackChanges);
+
+        if (employee is null)
+            throw new EmployeeNotFoundException(employeeId);
+
+        var projects = _repository.Project.GetProjects(employeeId, trackChanges);
+        var projectsDto = _mapper.Map<IEnumerable<ProjectDto>>(projects);
+        return projectsDto;
+    }
 }
