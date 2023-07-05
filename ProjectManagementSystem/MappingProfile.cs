@@ -13,5 +13,7 @@ public class MappingProfile : Profile
         CreateMap<Employee, EmployeeDto>()
             .ForCtorParam("FullName",
             opt => opt.MapFrom(e => string.Join(' ', e.LastName, e.FirstName, e.PatronymicName)));
+
+        CreateMap<ProjectForCreationDto, Project>();
     }
 }

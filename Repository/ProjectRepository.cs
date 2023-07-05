@@ -35,4 +35,9 @@ public class ProjectRepository : RepositoryBase<Project>, IProjectRepository
             .OrderBy(p => p.Name)
             .ToList();
     }
+
+    public void CreateProject(Project project)
+    {
+        Create(project);
+    }
 }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Contracts;
 using Entities.Exceptions;
+using Entities.Models;
 using Service.Contracts;
 using Shared.DataTransferObjects;
 
@@ -63,5 +64,16 @@ internal sealed class ProjectService : IProjectService
         var projects = _repository.Project.GetProjectsByEmployee(employeeId, trackChanges);
         var projectsDto = _mapper.Map<IEnumerable<ProjectDto>>(projects);
         return projectsDto;
+    }
+
+    public ProjectDto CreateProject(ProjectForCreationDto project)
+    {
+        var projectEntity = _mapper.Map<Project>(project);
+
+        _repository.Project.CreateProject(projectEntity);
+        _repository.Save();
+
+        var projectToReturn = _mapper.Map<ProjectDto>(projectEntity);
+        return projectToReturn;
     }
 }
