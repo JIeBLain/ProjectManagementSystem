@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
+using Shared.DataTransferObjects;
 
 namespace ProjectManagementSystem.Presentation.Controllers;
 
@@ -21,7 +22,7 @@ public class EmployeesController : ControllerBase
         return Ok(employees);
     }
 
-    [HttpGet("{id:guid}")]
+    [HttpGet("{id:guid}", Name = "EmployeeById")]
     public IActionResult GetEmployee(Guid id)
     {
         var employee = _service.EmployeeService.GetEmployee(id, trackChanges: false);
@@ -40,5 +41,15 @@ public class EmployeesController : ControllerBase
     {
         var project = _service.ProjectService.GetProjectByEmployee(employeeId, projectId, trackChanges: false);
         return Ok(project);
+    }
+
+    [HttpPost]
+    public IActionResult CreateEmployee([FromBody] EmployeeForCreationDto employee)
+    {
+        if (employee is null)
+            return BadRequest("EmployeeForCreationDto object is null");
+
+        var createdEmployee = _service.EmployeeService.CreateEmployee(employee);
+        return CreatedAtRoute("EmployeeById", new { id = createdEmployee.Id }, createdEmployee);
     }
 }

@@ -41,4 +41,9 @@ public class EmployeeRepository : RepositoryBase<Employee>, IEmployeeRepository
         return FindByCondition(e => e.ProjectManagerProjects.Any(p => p.Id.Equals(projectId)), trackChanges)
              .SingleOrDefault();
     }
+
+    public void CreateEmployee(Employee employee)
+    {
+        Create(employee);
+    }
 }

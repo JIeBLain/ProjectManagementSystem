@@ -15,5 +15,7 @@ public class MappingProfile : Profile
             opt => opt.MapFrom(e => string.Join(' ', e.LastName, e.FirstName, e.PatronymicName)));
 
         CreateMap<ProjectForCreationDto, Project>();
+
+        CreateMap<EmployeeForCreationDto, Employee>();
     }
 }
