@@ -11,4 +11,5 @@ public interface IEmployeeRepository
     Employee GetProjectManager(Guid projectId, bool trackChanges);
     void CreateEmployee(Employee employee);
     void CreateEmployeeForProject(Guid projectId, Employee employee);
+    void CreateProjectManagerForProject(Guid projectId, Employee projectManager);
 }

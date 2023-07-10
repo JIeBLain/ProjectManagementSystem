@@ -58,4 +58,19 @@ public class EmployeeRepository : RepositoryBase<Employee>, IEmployeeRepository
         RepositoryContext.Add(projectEmployee);
         Create(employee);
     }
+
+    public void CreateProjectManagerForProject(Guid projectId, Employee projectManager)
+    {
+        var project = RepositoryContext.Projects
+            .Where(p => p.Id == projectId)
+            .SingleOrDefault();
+
+        project.ProjectManager = projectManager;
+
+        var projectEmployee = new ProjectEmployee { Project = project, Employee = projectManager };
+
+        RepositoryContext.Update(project);
+        RepositoryContext.Add(projectEmployee);
+        Create(projectManager);
+    }
 }

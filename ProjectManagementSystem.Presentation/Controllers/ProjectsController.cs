@@ -43,7 +43,7 @@ public class ProjectsController : ControllerBase
         return Ok(employee);
     }
 
-    [HttpGet("{projectId:guid}/projectManager")]
+    [HttpGet("{projectId:guid}/projectManager", Name = "ProjectManagerByProject")]
     public IActionResult GetProjectManager(Guid projectId)
     {
         var projectManager = _service.EmployeeService.GetProjectManager(projectId, trackChanges: false);
@@ -68,9 +68,22 @@ public class ProjectsController : ControllerBase
             return BadRequest("EmployeeForCreationDto object is null");
 
         var employeeToReturn = _service.EmployeeService
-            .CreateEmployeeForProject(projectId, employee, false);
+            .CreateEmployeeForProject(projectId, employee, trackChanges: false);
 
         return CreatedAtRoute("EmployeeByProject",
             new { projectId, employeeId = employeeToReturn.Id }, employeeToReturn);
+    }
+
+    [HttpPost("{projectId:guid}")]
+    public IActionResult CreateProjectManagerForProject(Guid projectId, [FromBody] EmployeeForCreationDto projectManager)
+    {
+        if (projectManager is null)
+            return BadRequest("EmployeeForCreationDto object is null");
+
+        var projectManagerToReturn = _service.EmployeeService
+            .CreateProjectManagerForProject(projectId, projectManager, trackChanges: false);
+
+        return CreatedAtRoute("ProjectManagerByProject",
+            new { projectId, projectManager = projectManagerToReturn.Id }, projectManagerToReturn);
     }
 }
