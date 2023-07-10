@@ -10,4 +10,5 @@ public interface IEmployeeService
     EmployeeDto GetEmployeeByProject(Guid projectId, Guid employeeId, bool trackChanges);
     EmployeeDto GetProjectManager(Guid projectId, bool trackChanges);
     EmployeeDto CreateEmployee(EmployeeForCreationDto employee);
+    EmployeeDto CreateEmployeeForProject(Guid projectId, EmployeeForCreationDto employeeFoCreation, bool trackChanges);
 }

@@ -88,4 +88,20 @@ internal sealed class EmployeeService : IEmployeeService
         var employeeToReturn = _mapper.Map<EmployeeDto>(employeeEntity);
         return employeeToReturn;
     }
+
+    public EmployeeDto CreateEmployeeForProject(Guid projectId, EmployeeForCreationDto employeeFoCreation, bool trackChanges)
+    {
+        var project = _repository.Project.GetProject(projectId, trackChanges);
+
+        if (project is null)
+            throw new ProjectNotFoundException(projectId);
+
+        var employeeEntity = _mapper.Map<Employee>(employeeFoCreation);
+
+        _repository.Employee.CreateEmployeeForProject(projectId, employeeEntity);
+        _repository.Save();
+
+        var employeeToReturn = _mapper.Map<EmployeeDto>(employeeEntity);
+        return employeeToReturn;
+    }
 }
