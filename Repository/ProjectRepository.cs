@@ -40,4 +40,16 @@ public class ProjectRepository : RepositoryBase<Project>, IProjectRepository
     {
         Create(project);
     }
+
+    public void CreateProjectForEmployee(Guid employeeId, Project project)
+    {
+        var employee = RepositoryContext.Employees
+            .Where(e => e.Id.Equals(employeeId))
+            .SingleOrDefault();
+
+        var projectEmployee = new ProjectEmployee { Project = project, Employee = employee };
+
+        RepositoryContext.Add(projectEmployee);
+        Create(project);
+    }
 }

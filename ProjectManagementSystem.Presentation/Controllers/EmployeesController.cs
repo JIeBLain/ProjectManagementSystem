@@ -36,7 +36,7 @@ public class EmployeesController : ControllerBase
         return Ok(projects);
     }
 
-    [HttpGet("{employeeId:guid}/projects/{projectId:guid}")]
+    [HttpGet("{employeeId:guid}/projects/{projectId:guid}", Name = "ProjectByEmployee")]
     public IActionResult GetProjectByEmployee(Guid employeeId, Guid projectId)
     {
         var project = _service.ProjectService.GetProjectByEmployee(employeeId, projectId, trackChanges: false);
@@ -51,5 +51,15 @@ public class EmployeesController : ControllerBase
 
         var createdEmployee = _service.EmployeeService.CreateEmployee(employee);
         return CreatedAtRoute("EmployeeById", new { id = createdEmployee.Id }, createdEmployee);
+    }
+
+    [HttpPost("{employeeId:guid}/projects")]
+    public IActionResult CreateProjectForEmployee(Guid employeeId, ProjectForCreationDto project)
+    {
+        if (project is null)
+            return BadRequest("ProjectForCreationDto object is null");
+
+        var createdProject = _service.ProjectService.CreateProjectForEmployee(employeeId, project, trackChanges: false);
+        return CreatedAtRoute("ProjectByEmployee", new { employeeId, projectId = createdProject.Id }, createdProject);
     }
 }

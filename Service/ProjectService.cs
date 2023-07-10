@@ -76,4 +76,20 @@ internal sealed class ProjectService : IProjectService
         var projectToReturn = _mapper.Map<ProjectDto>(projectEntity);
         return projectToReturn;
     }
+
+    public ProjectDto CreateProjectForEmployee(Guid employeeId, ProjectForCreationDto projectForCreation, bool trackChanges)
+    {
+        var employee = _repository.Employee.GetEmployee(employeeId, trackChanges);
+
+        if (employee is null)
+            throw new EmployeeNotFoundException(employeeId);
+
+        var projectEntity = _mapper.Map<Project>(projectForCreation);
+
+        _repository.Project.CreateProjectForEmployee(employeeId, projectEntity);
+        _repository.Save();
+
+        var projectToReturn = _mapper.Map<ProjectDto>(projectEntity);
+        return projectToReturn;
+    }
 }

@@ -9,4 +9,5 @@ public interface IProjectService
     IEnumerable<ProjectDto> GetProjectsByEmployee(Guid employeeId, bool trackChanges);
     ProjectDto GetProjectByEmployee(Guid employeeId, Guid projectId, bool trackChanges);
     ProjectDto CreateProject(ProjectForCreationDto project);
+    ProjectDto CreateProjectForEmployee(Guid employeeId, ProjectForCreationDto projectForCreation, bool trackChanges);
 }

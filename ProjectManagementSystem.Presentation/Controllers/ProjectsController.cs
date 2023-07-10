@@ -36,7 +36,7 @@ public class ProjectsController : ControllerBase
         return Ok(employees);
     }
 
-    [HttpGet("{projectId:guid}/employees/{employeeId:guid}", Name = "GetEmployeeByProject")]
+    [HttpGet("{projectId:guid}/employees/{employeeId:guid}", Name = "EmployeeByProject")]
     public IActionResult GetEmployeeByProject(Guid projectId, Guid employeeId)
     {
         var employee = _service.EmployeeService.GetEmployeeByProject(projectId, employeeId, trackChanges: false);
@@ -70,7 +70,7 @@ public class ProjectsController : ControllerBase
         var employeeToReturn = _service.EmployeeService
             .CreateEmployeeForProject(projectId, employee, false);
 
-        return CreatedAtRoute("GetEmployeeByProject",
+        return CreatedAtRoute("EmployeeByProject",
             new { projectId, employeeId = employeeToReturn.Id }, employeeToReturn);
     }
 }

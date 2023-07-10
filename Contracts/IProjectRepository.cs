@@ -9,4 +9,5 @@ public interface IProjectRepository
     IEnumerable<Project> GetProjectsByEmployee(Guid employeeId, bool trackChanges);
     Project GetProjectByEmployee(Guid employeeId, Guid projectId, bool trackChanges);
     void CreateProject(Project project);
+    void CreateProjectForEmployee(Guid employeeId, Project project);
 }
