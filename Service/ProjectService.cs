@@ -69,8 +69,25 @@ internal sealed class ProjectService : IProjectService
     public ProjectDto CreateProject(ProjectForCreationDto project)
     {
         var projectEntity = _mapper.Map<Project>(project);
-
         _repository.Project.CreateProject(projectEntity);
+
+        if (projectEntity.ProjectManager is not null)
+        {
+            _repository.Employee.CreateEmployee(projectEntity.ProjectManager);
+            _repository.ProjectEmployee.CreateProjectEmployee(projectEntity, projectEntity.ProjectManager);
+        }
+
+        if (project.Employees is not null)
+        {
+            var employeeEntities = _mapper.Map<IEnumerable<Employee>>(project.Employees);
+
+            foreach (var employeeEntity in employeeEntities)
+            {
+                _repository.Employee.CreateEmployee(employeeEntity);
+                _repository.ProjectEmployee.CreateProjectEmployee(projectEntity, employeeEntity);
+            }
+        }
+
         _repository.Save();
 
         var projectToReturn = _mapper.Map<ProjectDto>(projectEntity);
