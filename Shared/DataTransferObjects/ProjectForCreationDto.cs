@@ -6,4 +6,6 @@ public record ProjectForCreationDto(
     string ContractorCompany,
     DateTime StartTime,
     DateTime EndTime,
-    int Priority);
+    int Priority,
+    EmployeeForCreationDto ProjectManager,
+    IEnumerable<EmployeeForCreationDto> Employees);
