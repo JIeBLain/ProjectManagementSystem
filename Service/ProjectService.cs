@@ -109,4 +109,37 @@ internal sealed class ProjectService : IProjectService
         var projectToReturn = _mapper.Map<ProjectDto>(projectEntity);
         return projectToReturn;
     }
+
+    public IEnumerable<ProjectDto> GetByIds(IEnumerable<Guid> ids, bool trackChanges)
+    {
+        if (ids is null)
+            throw new IdParametersBadRequestException();
+
+        var projectEntities = _repository.Project.GetByIds(ids, trackChanges);
+
+        if (ids.Count() != projectEntities.Count())
+            throw new CollectionByIdsBadRequestException();
+
+        var projectsToReturn = _mapper.Map<IEnumerable<ProjectDto>>(projectEntities);
+        return projectsToReturn;
+    }
+
+    public (IEnumerable<ProjectDto> projects, string ids) CreateProjectCollection(IEnumerable<ProjectForCreationDto> projectCollection)
+    {
+        if (projectCollection is null)
+            throw new ProjectCollectionBadRequest();
+
+        var projectEntities = _mapper.Map<IEnumerable<Project>>(projectCollection);
+
+        foreach (var project in projectEntities)
+        {
+            _repository.Project.CreateProject(project);
+        }
+
+        _repository.Save();
+
+        var projectCollectionToReturn = _mapper.Map<IEnumerable<ProjectDto>>(projectEntities);
+        var ids = string.Join(",", projectCollectionToReturn.Select(p => p.Id));
+        return (projects: projectCollectionToReturn, ids: ids);
+    }
 }

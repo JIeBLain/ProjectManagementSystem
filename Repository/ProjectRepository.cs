@@ -52,4 +52,10 @@ public class ProjectRepository : RepositoryBase<Project>, IProjectRepository
         RepositoryContext.Add(projectEmployee);
         Create(project);
     }
+
+    public IEnumerable<Project> GetByIds(IEnumerable<Guid> ids, bool trackChanges)
+    {
+        return FindByCondition(p => ids.Contains(p.Id), trackChanges)
+            .ToList();
+    }
 }
