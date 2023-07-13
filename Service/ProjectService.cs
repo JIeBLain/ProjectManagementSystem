@@ -140,6 +140,6 @@ internal sealed class ProjectService : IProjectService
 
         var projectCollectionToReturn = _mapper.Map<IEnumerable<ProjectDto>>(projectEntities);
         var ids = string.Join(",", projectCollectionToReturn.Select(p => p.Id));
-        return (projects: projectCollectionToReturn, ids: ids);
+        return (projects: projectCollectionToReturn, ids);
     }
 }

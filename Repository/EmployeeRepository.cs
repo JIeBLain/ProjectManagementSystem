@@ -73,4 +73,10 @@ public class EmployeeRepository : RepositoryBase<Employee>, IEmployeeRepository
         RepositoryContext.Add(projectEmployee);
         Create(projectManager);
     }
+
+    public IEnumerable<Employee> GetByIds(IEnumerable<Guid> ids, bool trackChanges)
+    {
+        return FindByCondition(e => ids.Contains(e.Id), trackChanges)
+            .ToList();
+    }
 }

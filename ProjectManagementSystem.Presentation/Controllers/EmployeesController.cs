@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ProjectManagementSystem.Presentation.ModelBinder;
 using Service.Contracts;
 using Shared.DataTransferObjects;
 
@@ -61,5 +62,20 @@ public class EmployeesController : ControllerBase
 
         var createdProject = _service.ProjectService.CreateProjectForEmployee(employeeId, project, trackChanges: false);
         return CreatedAtRoute("ProjectByEmployee", new { employeeId, projectId = createdProject.Id }, createdProject);
+    }
+
+    [HttpGet("collection/({ids})", Name = "EmployeeCollection")]
+    public IActionResult GetEmployeeCollection([ModelBinder(BinderType = typeof(ArrayModelBinder))] IEnumerable<Guid> ids)
+    {
+        var employees = _service.EmployeeService.GetByIds(ids, trackChanges: false);
+
+        return Ok(employees);
+    }
+
+    [HttpPost("collection")]
+    public IActionResult CreateEmployeeCollection([FromBody] IEnumerable<EmployeeForCreationDto> employeeCollection)
+    {
+        var result = _service.EmployeeService.CreateEmployeeCollection(employeeCollection);
+        return CreatedAtRoute("EmployeeCollection", new { result.ids }, result.employees);
     }
 }

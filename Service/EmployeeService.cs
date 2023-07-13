@@ -120,4 +120,37 @@ internal sealed class EmployeeService : IEmployeeService
         var projectManagerToReturn = _mapper.Map<EmployeeDto>(projectManagerEntity);
         return projectManagerToReturn;
     }
+
+    public IEnumerable<EmployeeDto> GetByIds(IEnumerable<Guid> ids, bool trackChanges)
+    {
+        if (ids is null)
+            throw new IdParametersBadRequestException();
+
+        var employeeEntities = _repository.Employee.GetByIds(ids, trackChanges);
+
+        if (ids.Count() != employeeEntities.Count())
+            throw new CollectionByIdsBadRequestException();
+
+        var employeesToReturn = _mapper.Map<IEnumerable<EmployeeDto>>(employeeEntities);
+        return employeesToReturn;
+    }
+
+    public (IEnumerable<EmployeeDto> employees, string ids) CreateEmployeeCollection(IEnumerable<EmployeeForCreationDto> employeeCollection)
+    {
+        if (employeeCollection is null)
+            throw new EmployeeCollectionBadRequest();
+
+        var employeeEntities = _mapper.Map<IEnumerable<Employee>>(employeeCollection);
+
+        foreach (var employee in employeeEntities)
+        {
+            _repository.Employee.CreateEmployee(employee);
+        }
+
+        _repository.Save();
+
+        var employeeCollectionToReturn = _mapper.Map<IEnumerable<EmployeeDto>>(employeeEntities);
+        var ids = string.Join(",", employeeCollectionToReturn.Select(e => e.Id));
+        return (employees: employeeCollectionToReturn, ids);
+    }
 }

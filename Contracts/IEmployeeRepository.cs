@@ -12,4 +12,5 @@ public interface IEmployeeRepository
     void CreateEmployee(Employee employee);
     void CreateEmployeeForProject(Guid projectId, Employee employee);
     void CreateProjectManagerForProject(Guid projectId, Employee projectManager);
+    IEnumerable<Employee> GetByIds(IEnumerable<Guid> ids, bool trackChanges);
 }
