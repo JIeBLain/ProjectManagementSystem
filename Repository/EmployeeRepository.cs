@@ -79,4 +79,11 @@ public class EmployeeRepository : RepositoryBase<Employee>, IEmployeeRepository
         return FindByCondition(e => ids.Contains(e.Id), trackChanges)
             .ToList();
     }
+
+    public IEnumerable<Employee> GetEmployeesWithoutProject(bool trackChanges)
+    {
+        return FindByCondition(e => e.ProjectEmployees.Count() == 0, trackChanges)
+            .OrderBy(e => e.LastName)
+            .ToList();
+    }
 }

@@ -14,4 +14,5 @@ public interface IEmployeeService
     EmployeeDto CreateProjectManagerForProject(Guid projectId, EmployeeForCreationDto projectManagerForCreation, bool trackChanges);
     IEnumerable<EmployeeDto> GetByIds(IEnumerable<Guid> ids, bool trackChanges);
     (IEnumerable<EmployeeDto> employees, string ids) CreateEmployeeCollection(IEnumerable<EmployeeForCreationDto> employeeCollection);
+    IEnumerable<EmployeeDto> GetEmployeesWithoutProject(bool trackChanges);
 }

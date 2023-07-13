@@ -78,4 +78,11 @@ public class EmployeesController : ControllerBase
         var result = _service.EmployeeService.CreateEmployeeCollection(employeeCollection);
         return CreatedAtRoute("EmployeeCollection", new { result.ids }, result.employees);
     }
+
+    [HttpGet("withoutProject")]
+    public IActionResult GetEmployeesWithoutProject()
+    {
+        var employees = _service.EmployeeService.GetEmployeesWithoutProject(trackChanges: false);
+        return Ok(employees);
+    }
 }

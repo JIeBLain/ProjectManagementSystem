@@ -153,4 +153,11 @@ internal sealed class EmployeeService : IEmployeeService
         var ids = string.Join(",", employeeCollectionToReturn.Select(e => e.Id));
         return (employees: employeeCollectionToReturn, ids);
     }
+
+    public IEnumerable<EmployeeDto> GetEmployeesWithoutProject(bool trackChanges)
+    {
+        var employees = _repository.Employee.GetEmployeesWithoutProject(trackChanges);
+        var employeesDto = _mapper.Map<IEnumerable<EmployeeDto>>(employees);
+        return employeesDto;
+    }
 }
