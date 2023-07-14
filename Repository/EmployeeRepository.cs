@@ -1,5 +1,6 @@
 ﻿using Contracts;
 using Entities.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Repository;
 
@@ -25,8 +26,7 @@ public class EmployeeRepository : RepositoryBase<Employee>, IEmployeeRepository
     public Employee GetEmployeeByProject(Guid projectId, Guid employeeId, bool trackChanges)
     {
         return FindByCondition(e => e.ProjectEmployees.Any(pe => pe.ProjectId.Equals(projectId)), trackChanges)
-            .Where(e => e.Id.Equals(employeeId))
-            .SingleOrDefault();
+            .SingleOrDefault(e => e.Id.Equals(employeeId));
     }
 
     public IEnumerable<Employee> GetEmployeesByProject(Guid projectId, bool trackChanges)
@@ -50,8 +50,7 @@ public class EmployeeRepository : RepositoryBase<Employee>, IEmployeeRepository
     public void CreateEmployeeForProject(Guid projectId, Employee employee)
     {
         var project = RepositoryContext.Projects
-            .Where(p => p.Id.Equals(projectId))
-            .SingleOrDefault();
+            .SingleOrDefault(p => p.Id.Equals(projectId));
 
         var projectEmployee = new ProjectEmployee { Project = project, Employee = employee };
 
@@ -62,14 +61,12 @@ public class EmployeeRepository : RepositoryBase<Employee>, IEmployeeRepository
     public void CreateProjectManagerForProject(Guid projectId, Employee projectManager)
     {
         var project = RepositoryContext.Projects
-            .Where(p => p.Id == projectId)
-            .SingleOrDefault();
+            .SingleOrDefault(p => p.Id.Equals(projectId));
 
         project.ProjectManager = projectManager;
 
         var projectEmployee = new ProjectEmployee { Project = project, Employee = projectManager };
 
-        RepositoryContext.Update(project);
         RepositoryContext.Add(projectEmployee);
         Create(projectManager);
     }
@@ -85,5 +82,24 @@ public class EmployeeRepository : RepositoryBase<Employee>, IEmployeeRepository
         return FindByCondition(e => e.ProjectEmployees.Count() == 0, trackChanges)
             .OrderBy(e => e.LastName)
             .ToList();
+    }
+
+    public void DeleteEmployeeForProject(Guid projectId, Guid employeeId, bool trackChanges)
+    {
+
+        var project = RepositoryContext.Projects
+            .Include(p => p.ProjectManager)
+            .Include(p => p.ProjectEmployees)
+            .SingleOrDefault(p => p.Id.Equals(projectId));
+
+        if (project.ProjectManager.Id.Equals(employeeId))
+        {
+            project.ProjectManager = null;
+        }
+
+        var projectEmployee = project.ProjectEmployees
+            .SingleOrDefault(pe => pe.EmployeeId.Equals(employeeId));
+
+        RepositoryContext.ProjectEmployees.Remove(projectEmployee);
     }
 }

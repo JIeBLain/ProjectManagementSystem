@@ -9,6 +9,12 @@ public class ProjectEmployeeRepository : RepositoryBase<ProjectEmployee>, IProje
     {
     }
 
+    public ProjectEmployee GetProjectEmployee(Guid projectId, Guid employeeId, bool trackChanges)
+    {
+        return FindByCondition(pe => pe.ProjectId.Equals(projectId) && pe.EmployeeId.Equals(employeeId), trackChanges)
+            .SingleOrDefault();
+    }
+
     public void CreateProjectEmployee(Project project, Employee employee)
     {
         var projectEmployee = new ProjectEmployee
@@ -20,5 +26,10 @@ public class ProjectEmployeeRepository : RepositoryBase<ProjectEmployee>, IProje
         };
 
         Create(projectEmployee);
+    }
+
+    public void DeleteProjectEmployee(ProjectEmployee projectEmployee)
+    {
+        Delete(projectEmployee);
     }
 }

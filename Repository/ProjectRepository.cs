@@ -25,8 +25,7 @@ public class ProjectRepository : RepositoryBase<Project>, IProjectRepository
     public Project GetProjectByEmployee(Guid employeeId, Guid projectId, bool trackChanges)
     {
         return FindByCondition(p => p.ProjectEmployees.Any(pe => pe.EmployeeId.Equals(employeeId)), trackChanges)
-            .Where(p => p.Id.Equals(projectId))
-            .SingleOrDefault();
+            .SingleOrDefault(p => p.Id.Equals(projectId));
     }
 
     public IEnumerable<Project> GetProjectsByEmployee(Guid employeeId, bool trackChanges)
@@ -44,8 +43,7 @@ public class ProjectRepository : RepositoryBase<Project>, IProjectRepository
     public void CreateProjectForEmployee(Guid employeeId, Project project)
     {
         var employee = RepositoryContext.Employees
-            .Where(e => e.Id.Equals(employeeId))
-            .SingleOrDefault();
+            .SingleOrDefault(e => e.Id.Equals(employeeId));
 
         var projectEmployee = new ProjectEmployee { Project = project, Employee = employee };
 

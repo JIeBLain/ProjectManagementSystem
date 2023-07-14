@@ -102,4 +102,11 @@ public class ProjectsController : ControllerBase
         var result = _service.ProjectService.CreateProjectCollection(projectCollection);
         return CreatedAtRoute("ProjectCollection", new { result.ids }, result.projects);
     }
+
+    [HttpDelete("{projectId:guid}/employees/{employeeId:guid}")]
+    public IActionResult DeleteEmployeeForProject(Guid projectId, Guid employeeId)
+    {
+        _service.EmployeeService.DeleteEmployeeForProject(projectId, employeeId, trackChanges: false);
+        return NoContent();
+    }
 }

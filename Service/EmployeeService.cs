@@ -160,4 +160,23 @@ internal sealed class EmployeeService : IEmployeeService
         var employeesDto = _mapper.Map<IEnumerable<EmployeeDto>>(employees);
         return employeesDto;
     }
+
+    public void DeleteEmployeeForProject(Guid projectId, Guid employeeId, bool trackChanges)
+    {
+        var project = _repository.Project.GetProject(projectId, trackChanges);
+
+        if (project is null)
+            throw new ProjectNotFoundException(projectId);
+
+        var employeeForProject = _repository.Employee.GetEmployeeByProject(projectId, employeeId, trackChanges);
+
+        if (employeeForProject is null)
+            throw new EmployeeNotFoundException(employeeId);
+
+        //var projectEmployee = _repository.ProjectEmployee.GetProjectEmployee(projectId, employeeId, trackChanges);
+        //_repository.ProjectEmployee.DeleteProjectEmployee(projectEmployee);
+
+        _repository.Employee.DeleteEmployeeForProject(projectId, employeeId, trackChanges);
+        _repository.Save();
+    }
 }
