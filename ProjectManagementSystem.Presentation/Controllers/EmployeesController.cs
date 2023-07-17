@@ -92,4 +92,11 @@ public class EmployeesController : ControllerBase
         _service.EmployeeService.DeleteEmployee(id, trackChanges: false);
         return NoContent();
     }
+
+    [HttpDelete("{employeeId:guid}/projects/{projectId:guid}")]
+    public IActionResult DeleteProjectForEmployee(Guid employeeId, Guid projectId)
+    {
+        _service.ProjectService.DeleteProjectForEmployee(employeeId, projectId, trackChanges: false);
+        return NoContent();
+    }
 }
