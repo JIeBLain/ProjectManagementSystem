@@ -161,6 +161,17 @@ internal sealed class EmployeeService : IEmployeeService
         return employeesDto;
     }
 
+    public void DeleteEmployee(Guid id, bool trackChanges)
+    {
+        var employee = _repository.Employee.GetEmployee(id, trackChanges);
+
+        if (employee is null)
+            throw new EmployeeNotFoundException(id);
+
+        _repository.Employee.DeleteEmployee(employee);
+        _repository.Save();
+    }
+
     public void DeleteEmployeeForProject(Guid projectId, Guid employeeId, bool trackChanges)
     {
         var project = _repository.Project.GetProject(projectId, trackChanges);
@@ -172,9 +183,6 @@ internal sealed class EmployeeService : IEmployeeService
 
         if (employeeForProject is null)
             throw new EmployeeNotFoundException(employeeId);
-
-        //var projectEmployee = _repository.ProjectEmployee.GetProjectEmployee(projectId, employeeId, trackChanges);
-        //_repository.ProjectEmployee.DeleteProjectEmployee(projectEmployee);
 
         _repository.Employee.DeleteEmployeeForProject(projectId, employeeId, trackChanges);
         _repository.Save();

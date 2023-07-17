@@ -103,6 +103,13 @@ public class ProjectsController : ControllerBase
         return CreatedAtRoute("ProjectCollection", new { result.ids }, result.projects);
     }
 
+    [HttpDelete("{id:guid}")]
+    public IActionResult DeleteProject(Guid id)
+    {
+        _service.ProjectService.DeleteProject(id, trackChanges: false);
+        return NoContent();
+    }
+
     [HttpDelete("{projectId:guid}/employees/{employeeId:guid}")]
     public IActionResult DeleteEmployeeForProject(Guid projectId, Guid employeeId)
     {

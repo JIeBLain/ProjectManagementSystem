@@ -142,4 +142,15 @@ internal sealed class ProjectService : IProjectService
         var ids = string.Join(",", projectCollectionToReturn.Select(p => p.Id));
         return (projects: projectCollectionToReturn, ids);
     }
+
+    public void DeleteProject(Guid id, bool trackChanges)
+    {
+        var project = _repository.Project.GetProject(id, trackChanges);
+
+        if (project is null)
+            throw new ProjectNotFoundException(id);
+
+        _repository.Project.DeleteProject(project);
+        _repository.Save();
+    }
 }

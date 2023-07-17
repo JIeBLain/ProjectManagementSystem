@@ -15,5 +15,6 @@ public interface IEmployeeService
     IEnumerable<EmployeeDto> GetByIds(IEnumerable<Guid> ids, bool trackChanges);
     (IEnumerable<EmployeeDto> employees, string ids) CreateEmployeeCollection(IEnumerable<EmployeeForCreationDto> employeeCollection);
     IEnumerable<EmployeeDto> GetEmployeesWithoutProject(bool trackChanges);
+    void DeleteEmployee(Guid id, bool trackChanges);
     void DeleteEmployeeForProject(Guid projectId, Guid employeeId, bool trackChanges);
 }

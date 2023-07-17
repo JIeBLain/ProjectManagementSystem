@@ -55,7 +55,6 @@ public class EmployeeRepository : RepositoryBase<Employee>, IEmployeeRepository
         var projectEmployee = new ProjectEmployee { Project = project, Employee = employee };
 
         RepositoryContext.Add(projectEmployee);
-        Create(employee);
     }
 
     public void CreateProjectManagerForProject(Guid projectId, Employee projectManager)
@@ -68,7 +67,6 @@ public class EmployeeRepository : RepositoryBase<Employee>, IEmployeeRepository
         var projectEmployee = new ProjectEmployee { Project = project, Employee = projectManager };
 
         RepositoryContext.Add(projectEmployee);
-        Create(projectManager);
     }
 
     public IEnumerable<Employee> GetByIds(IEnumerable<Guid> ids, bool trackChanges)
@@ -84,15 +82,19 @@ public class EmployeeRepository : RepositoryBase<Employee>, IEmployeeRepository
             .ToList();
     }
 
+    public void DeleteEmployee(Employee employee)
+    {
+        Delete(employee);
+    }
+
     public void DeleteEmployeeForProject(Guid projectId, Guid employeeId, bool trackChanges)
     {
-
         var project = RepositoryContext.Projects
             .Include(p => p.ProjectManager)
             .Include(p => p.ProjectEmployees)
             .SingleOrDefault(p => p.Id.Equals(projectId));
 
-        if (project.ProjectManager.Id.Equals(employeeId))
+        if (project.ProjectManager is not null && project.ProjectManager.Id.Equals(employeeId))
         {
             project.ProjectManager = null;
         }

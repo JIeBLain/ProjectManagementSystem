@@ -56,4 +56,9 @@ public class ProjectRepository : RepositoryBase<Project>, IProjectRepository
         return FindByCondition(p => ids.Contains(p.Id), trackChanges)
             .ToList();
     }
+
+    public void DeleteProject(Project project)
+    {
+        Delete(project);
+    }
 }
