@@ -169,4 +169,20 @@ internal sealed class ProjectService : IProjectService
         _repository.Project.DeleteProjectForEmployee(employeeId, projectId, trackChanges);
         _repository.Save();
     }
+
+    public void UpdateProject(Guid projectId, ProjectForUpdateDto projectForUpdate, bool trackChanges)
+    {
+        var projectEntity = _repository.Project.GetProject(projectId, trackChanges);
+
+        if (projectEntity is null)
+            throw new ProjectNotFoundException(projectId);
+
+        if (projectEntity.ProjectEmployees.Any(pe => pe.EmployeeId.Equals(projectEntity.ProjectManagerId)))
+        {
+
+        }
+
+        _mapper.Map(projectForUpdate, projectEntity);
+        _repository.Save();
+    }
 }

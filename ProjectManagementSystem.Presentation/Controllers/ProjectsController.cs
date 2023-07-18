@@ -127,4 +127,14 @@ public class ProjectsController : ControllerBase
             employee, projectTrackChanges: false, employeeTrackChanges: true);
         return NoContent();
     }
+
+    [HttpPut("{projectId:guid}")]
+    public IActionResult UpdateProject(Guid projectId, [FromBody] ProjectForUpdateDto project)
+    {
+        if (project is null)
+            return BadRequest("ProjectForUpdateDto object is null");
+
+        _service.ProjectService.UpdateProject(projectId, project, trackChanges: true);
+        return NoContent();
+    }
 }
