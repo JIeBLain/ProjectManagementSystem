@@ -116,4 +116,15 @@ public class ProjectsController : ControllerBase
         _service.EmployeeService.DeleteEmployeeForProject(projectId, employeeId, trackChanges: false);
         return NoContent();
     }
+
+    [HttpPut("{projectId:guid}/employees/{employeeId:guid}")]
+    public IActionResult UpdateEmployeeForProject(Guid projectId, Guid employeeId, [FromBody] EmployeeForUpdateDto employee)
+    {
+        if (employee is null)
+            return BadRequest("EmployeeForUpdateDto object is null");
+
+        _service.EmployeeService.UpdateEmployeeForProject(projectId, employeeId,
+            employee, projectTrackChanges: false, employeeTrackChanges: true);
+        return NoContent();
+    }
 }

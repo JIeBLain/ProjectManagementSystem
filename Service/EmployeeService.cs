@@ -187,4 +187,20 @@ internal sealed class EmployeeService : IEmployeeService
         _repository.Employee.DeleteEmployeeForProject(projectId, employeeId, trackChanges);
         _repository.Save();
     }
+
+    public void UpdateEmployeeForProject(Guid projectId, Guid employeeId, EmployeeForUpdateDto employeeForUpdate, bool projectTrackChanges, bool employeeTrackChanges)
+    {
+        var project = _repository.Project.GetProject(projectId, projectTrackChanges);
+
+        if (project is null)
+            throw new ProjectNotFoundException(projectId);
+
+        var employeeEntity = _repository.Employee.GetEmployee(employeeId, employeeTrackChanges);
+
+        if (employeeEntity is null)
+            throw new EmployeeNotFoundException(employeeId);
+
+        _mapper.Map(employeeForUpdate, employeeEntity);
+        _repository.Save();
+    }
 }
