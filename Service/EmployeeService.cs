@@ -66,14 +66,26 @@ internal sealed class EmployeeService : IEmployeeService
         return employeesDto;
     }
 
-    public EmployeeDto GetProjectManager(Guid projectId, bool trackChanges)
+    public EmployeeDto GetProjectManagerByProject(Guid projectId, bool trackChanges)
     {
         var project = _repository.Project.GetProject(projectId, trackChanges);
 
         if (project is null)
             throw new ProjectNotFoundException(projectId);
 
-        var projectManager = _repository.Employee.GetProjectManager(projectId, trackChanges);
+        var projectManager = _repository.ProjectEmployee.GetProjectManagerByProject(projectId, trackChanges);
+        var projectManagerDto = _mapper.Map<EmployeeDto>(projectManager);
+        return projectManagerDto;
+    }
+
+    public EmployeeDto GetProjectManagerByEmployee(Guid employeeId, bool trackChanges)
+    {
+        var employee = _repository.Employee.GetEmployee(employeeId, trackChanges);
+
+        if (employee is null)
+            throw new EmployeeNotFoundException(employeeId);
+
+        var projectManager = _repository.ProjectEmployee.GetProjectManagerByEmployee(employeeId, trackChanges);
         var projectManagerDto = _mapper.Map<EmployeeDto>(projectManager);
         return projectManagerDto;
     }
@@ -114,7 +126,7 @@ internal sealed class EmployeeService : IEmployeeService
 
         var projectManagerEntity = _mapper.Map<Employee>(projectManagerForCreation);
 
-        _repository.Employee.CreateProjectManagerForProject(projectId, projectManagerEntity);
+        _repository.ProjectEmployee.CreateProjectManagerForProject(projectId, projectManagerEntity);
         _repository.Save();
 
         var projectManagerToReturn = _mapper.Map<EmployeeDto>(projectManagerEntity);

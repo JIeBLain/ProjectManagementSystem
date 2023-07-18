@@ -47,7 +47,7 @@ public class ProjectsController : ControllerBase
     [HttpGet("{projectId:guid}/projectManager", Name = "ProjectManagerByProject")]
     public IActionResult GetProjectManager(Guid projectId)
     {
-        var projectManager = _service.EmployeeService.GetProjectManager(projectId, trackChanges: false);
+        var projectManager = _service.EmployeeService.GetProjectManagerByProject(projectId, trackChanges: false);
         return Ok(projectManager);
     }
 

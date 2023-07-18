@@ -24,7 +24,5 @@ public class Project
 
     [Required(ErrorMessage = "Priority is a required field.")]
     public int Priority { get; set; }
-    public Guid? ProjectManagerId { get; set; }
-    public Employee? ProjectManager { get; set; }
     public ICollection<ProjectEmployee>? ProjectEmployees { get; set; }
 }

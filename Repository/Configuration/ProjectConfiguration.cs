@@ -17,8 +17,7 @@ public class ProjectConfiguration : IEntityTypeConfiguration<Project>
                 ContractorCompany = "DevShare",
                 StartTime = new DateTime(2023, 06, 18),
                 EndTime = new DateTime(2024, 01, 24),
-                Priority = 1,
-                ProjectManagerId = new Guid("2cd2000a-b580-4fce-be7e-07dbbe6685fa")
+                Priority = 1
             },
             new Project
             {
@@ -28,8 +27,7 @@ public class ProjectConfiguration : IEntityTypeConfiguration<Project>
                 ContractorCompany = "DevShare",
                 StartTime = new DateTime(2023, 06, 19),
                 EndTime = new DateTime(2023, 09, 07),
-                Priority = 3,
-                ProjectManagerId = new Guid("774ef45f-9896-41fc-ac08-b16e6b3cc2a2")
+                Priority = 3
             },
             new Project
             {
@@ -39,8 +37,7 @@ public class ProjectConfiguration : IEntityTypeConfiguration<Project>
                 ContractorCompany = "DevShare",
                 StartTime = new DateTime(2023, 05, 25),
                 EndTime = new DateTime(2023, 10, 22),
-                Priority = 2,
-                ProjectManagerId = new Guid("4ebe2333-57aa-421a-9ea8-fc8fdb9838a4")
+                Priority = 2
             });
     }
 }

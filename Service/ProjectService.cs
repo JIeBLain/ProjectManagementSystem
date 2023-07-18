@@ -71,12 +71,6 @@ internal sealed class ProjectService : IProjectService
         var projectEntity = _mapper.Map<Project>(project);
         _repository.Project.CreateProject(projectEntity);
 
-        if (projectEntity.ProjectManager is not null)
-        {
-            _repository.Employee.CreateEmployee(projectEntity.ProjectManager);
-            _repository.ProjectEmployee.CreateProjectEmployee(projectEntity, projectEntity.ProjectManager);
-        }
-
         if (project.Employees is not null)
         {
             var employeeEntities = _mapper.Map<IEnumerable<Employee>>(project.Employees);
@@ -176,11 +170,6 @@ internal sealed class ProjectService : IProjectService
 
         if (projectEntity is null)
             throw new ProjectNotFoundException(projectId);
-
-        if (projectEntity.ProjectEmployees.Any(pe => pe.EmployeeId.Equals(projectEntity.ProjectManagerId)))
-        {
-
-        }
 
         _mapper.Map(projectForUpdate, projectEntity);
         _repository.Save();

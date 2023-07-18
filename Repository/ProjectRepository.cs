@@ -1,6 +1,5 @@
 ﻿using Contracts;
 using Entities.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace Repository;
 
@@ -65,24 +64,18 @@ public class ProjectRepository : RepositoryBase<Project>, IProjectRepository
 
     public void DeleteProjectForEmployee(Guid employeeId, Guid projectId, bool trackChanges)
     {
-        var employee = RepositoryContext.Employees
-            .Include(e => e.ProjectEmployees)
-            .Include(e => e.ProjectManagerProjects)
-            .SingleOrDefault(e => e.Id.Equals(employeeId));
+        var projectEmployee = RepositoryContext.ProjectEmployees
+            .SingleOrDefault(pe => pe.EmployeeId.Equals(employeeId) && pe.ProjectId.Equals(projectId));
 
-        if (employee is not null)
-        {
-            var project = employee.ProjectManagerProjects
-                .SingleOrDefault(p => p.Id.Equals(projectId));
+        //if (projectEmployee.ProjectManager.Id.Equals(employeeId))
+        //{
+        //    var projectEmployees = RepositoryContext.ProjectEmployees.Where(pe => pe.ProjectId.Equals(projectId));
 
-            if (project is not null)
-            {
-                employee.ProjectManagerProjects.Remove(project);
-            }
-        }
-
-        var projectEmployee = employee.ProjectEmployees
-            .SingleOrDefault(pe => pe.ProjectId.Equals(projectId));
+        //    foreach (var pe in projectEmployees)
+        //    {
+        //        pe.ProjectManager = null;
+        //    }
+        //}
 
         RepositoryContext.Remove(projectEmployee);
     }

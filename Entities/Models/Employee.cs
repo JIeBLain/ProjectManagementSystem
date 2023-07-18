@@ -32,8 +32,5 @@ public class Employee
 
     [Phone]
     public string? Phone { get; set; }
-
-    public ICollection<Project>? ProjectManagerProjects { get; set; }
-
     public ICollection<ProjectEmployee>? ProjectEmployees { get; set; }
 }

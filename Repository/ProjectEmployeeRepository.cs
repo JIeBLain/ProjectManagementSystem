@@ -15,6 +15,20 @@ public class ProjectEmployeeRepository : RepositoryBase<ProjectEmployee>, IProje
             .SingleOrDefault();
     }
 
+    public Employee GetProjectManagerByProject(Guid projectId, bool trackChanges)
+    {
+        return FindByCondition(pe => pe.ProjectId.Equals(projectId), trackChanges)
+            .Select(pe => pe.ProjectManager)
+            .SingleOrDefault();
+    }
+
+    public Employee GetProjectManagerByEmployee(Guid employeeId, bool trackChanges)
+    {
+        return FindByCondition(pe => pe.EmployeeId.Equals(employeeId), trackChanges)
+            .Select(pe => pe.ProjectManager)
+            .SingleOrDefault();
+    }
+
     public void CreateProjectEmployee(Project project, Employee employee)
     {
         var projectEmployee = new ProjectEmployee
@@ -23,6 +37,29 @@ public class ProjectEmployeeRepository : RepositoryBase<ProjectEmployee>, IProje
             Project = project,
             EmployeeId = employee.Id,
             Employee = employee
+        };
+
+        Create(projectEmployee);
+    }
+
+    public void CreateProjectManagerForProject(Guid projectId, Employee projectManager)
+    {
+        var projectEmployees = RepositoryContext.ProjectEmployees
+            .Where(pe => pe.ProjectId.Equals(projectId));
+
+        foreach (var pe in projectEmployees)
+        {
+            pe.ProjectManager = projectManager;
+        }
+
+        var project = RepositoryContext.Projects
+            .SingleOrDefault(p => p.Id.Equals(projectId));
+
+        var projectEmployee = new ProjectEmployee
+        {
+            Project = project,
+            Employee = projectManager,
+            ProjectManager = projectManager
         };
 
         Create(projectEmployee);

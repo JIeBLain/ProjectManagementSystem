@@ -8,7 +8,8 @@ public interface IEmployeeService
     EmployeeDto GetEmployee(Guid id, bool trackChanges);
     IEnumerable<EmployeeDto> GetEmployeesByProject(Guid projectId, bool trackChanges);
     EmployeeDto GetEmployeeByProject(Guid projectId, Guid employeeId, bool trackChanges);
-    EmployeeDto GetProjectManager(Guid projectId, bool trackChanges);
+    EmployeeDto GetProjectManagerByProject(Guid projectId, bool trackChanges);
+    EmployeeDto GetProjectManagerByEmployee(Guid employeeId, bool trackChanges);
     EmployeeDto CreateEmployee(EmployeeForCreationDto employee);
     EmployeeDto CreateEmployeeForProject(Guid projectId, EmployeeForCreationDto employeeFoCreation, bool trackChanges);
     EmployeeDto CreateProjectManagerForProject(Guid projectId, EmployeeForCreationDto projectManagerForCreation, bool trackChanges);
