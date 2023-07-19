@@ -40,17 +40,6 @@ public class ProjectRepository : RepositoryBase<Project>, IProjectRepository
         Create(project);
     }
 
-    public void CreateProjectForEmployee(Guid employeeId, Project project)
-    {
-        var employee = RepositoryContext.Employees
-            .SingleOrDefault(e => e.Id.Equals(employeeId));
-
-        var projectEmployee = new ProjectEmployee { Project = project, Employee = employee };
-
-        RepositoryContext.Add(projectEmployee);
-        Create(project);
-    }
-
     public IEnumerable<Project> GetByIds(IEnumerable<Guid> ids, bool trackChanges)
     {
         return FindByCondition(p => ids.Contains(p.Id), trackChanges)
