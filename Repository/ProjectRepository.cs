@@ -50,22 +50,4 @@ public class ProjectRepository : RepositoryBase<Project>, IProjectRepository
     {
         Delete(project);
     }
-
-    public void DeleteProjectForEmployee(Guid employeeId, Guid projectId, bool trackChanges)
-    {
-        var projectEmployee = RepositoryContext.ProjectEmployees
-            .SingleOrDefault(pe => pe.EmployeeId.Equals(employeeId) && pe.ProjectId.Equals(projectId));
-
-        //if (projectEmployee.ProjectManager.Id.Equals(employeeId))
-        //{
-        //    var projectEmployees = RepositoryContext.ProjectEmployees.Where(pe => pe.ProjectId.Equals(projectId));
-
-        //    foreach (var pe in projectEmployees)
-        //    {
-        //        pe.ProjectManager = null;
-        //    }
-        //}
-
-        RepositoryContext.Remove(projectEmployee);
-    }
 }

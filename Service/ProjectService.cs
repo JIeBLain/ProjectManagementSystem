@@ -144,7 +144,7 @@ internal sealed class ProjectService : IProjectService
         if (projectForEmployee is null)
             throw new ProjectNotFoundException(projectId);
 
-        _repository.Project.DeleteProjectForEmployee(employeeId, projectId, trackChanges);
+        _repository.ProjectEmployee.DeleteProjectForEmployee(employeeId, projectId, trackChanges);
         _repository.Save();
     }
 

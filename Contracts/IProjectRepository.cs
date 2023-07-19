@@ -11,5 +11,4 @@ public interface IProjectRepository
     void CreateProject(Project project);
     IEnumerable<Project> GetByIds(IEnumerable<Guid> ids, bool trackChanges);
     void DeleteProject(Project project);
-    void DeleteProjectForEmployee(Guid employeeId, Guid projectId, bool trackChanges);
 }

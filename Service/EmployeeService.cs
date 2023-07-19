@@ -196,7 +196,7 @@ internal sealed class EmployeeService : IEmployeeService
         if (employeeForProject is null)
             throw new EmployeeNotFoundException(employeeId);
 
-        _repository.Employee.DeleteEmployeeForProject(projectId, employeeId, trackChanges);
+        _repository.ProjectEmployee.DeleteEmployeeForProject(projectId, employeeId, trackChanges);
         _repository.Save();
     }
 

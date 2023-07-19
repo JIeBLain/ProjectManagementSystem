@@ -10,4 +10,6 @@ public interface IProjectEmployeeRepository
     void CreateProjectEmployee(Project project, Employee employee);
     void CreateProjectManagerForProject(Guid projectId, Employee projectManager);
     void DeleteProjectEmployee(ProjectEmployee projectEmployee);
+    void DeleteEmployeeForProject(Guid projectId, Guid employeeId, bool trackChanges);
+    void DeleteProjectForEmployee(Guid employeeId, Guid projectId, bool trackChanges);
 }

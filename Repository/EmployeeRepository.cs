@@ -80,23 +80,4 @@ public class EmployeeRepository : RepositoryBase<Employee>, IEmployeeRepository
 
         Delete(employee);
     }
-
-    public void DeleteEmployeeForProject(Guid projectId, Guid employeeId, bool trackChanges)
-    {
-        var projectEmployees = RepositoryContext.ProjectEmployees
-            .Where(pe => pe.ProjectId.Equals(projectId));
-
-        foreach (var pe in projectEmployees)
-        {
-            if (pe.ProjectManagerId.Equals(employeeId))
-            {
-                pe.ProjectManagerId = null;
-            }
-        }
-
-        var projectEmployee = projectEmployees
-            .SingleOrDefault(pe => pe.ProjectId.Equals(projectId) && pe.EmployeeId.Equals(employeeId));
-
-        RepositoryContext.Remove(projectEmployee);
-    }
 }

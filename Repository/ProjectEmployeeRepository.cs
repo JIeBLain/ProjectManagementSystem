@@ -69,4 +69,40 @@ public class ProjectEmployeeRepository : RepositoryBase<ProjectEmployee>, IProje
     {
         Delete(projectEmployee);
     }
+
+    public void DeleteEmployeeForProject(Guid projectId, Guid employeeId, bool trackChanges)
+    {
+        var projectEmployees = FindByCondition(pe => pe.ProjectId.Equals(projectId), trackChanges);
+
+        foreach (var pe in projectEmployees)
+        {
+            if (pe.ProjectManagerId.Equals(employeeId))
+            {
+                pe.ProjectManagerId = null;
+            }
+        }
+
+        var projectEmployee = projectEmployees
+            .SingleOrDefault(pe => pe.ProjectId.Equals(projectId) && pe.EmployeeId.Equals(employeeId));
+
+        Delete(projectEmployee);
+    }
+
+    public void DeleteProjectForEmployee(Guid employeeId, Guid projectId, bool trackChanges)
+    {
+        var projectEmployees = FindByCondition(pe => pe.EmployeeId.Equals(employeeId), trackChanges);
+
+        foreach (var pe in projectEmployees)
+        {
+            if (pe.ProjectManagerId.Equals(employeeId))
+            {
+                pe.ProjectManagerId = null;
+            }
+        }
+
+        var projectManager = projectEmployees
+            .SingleOrDefault(pe => pe.EmployeeId.Equals(employeeId) && pe.ProjectId.Equals(projectId));
+
+        Delete(projectManager);
+    }
 }
