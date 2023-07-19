@@ -45,7 +45,12 @@ public class EmployeeRepository : RepositoryBase<Employee>, IEmployeeRepository
         var project = RepositoryContext.Projects
             .SingleOrDefault(p => p.Id.Equals(projectId));
 
-        var projectEmployee = new ProjectEmployee { Project = project, Employee = employee };
+        var projectManager = RepositoryContext.ProjectEmployees
+            .Where(pe => pe.ProjectId.Equals(projectId))
+            .Select(pe => pe.ProjectManager)
+            .FirstOrDefault();
+
+        var projectEmployee = new ProjectEmployee { Project = project, Employee = employee, ProjectManager = projectManager };
 
         RepositoryContext.Add(projectEmployee);
     }
@@ -65,24 +70,33 @@ public class EmployeeRepository : RepositoryBase<Employee>, IEmployeeRepository
 
     public void DeleteEmployee(Employee employee)
     {
+        var projectEmployees = RepositoryContext.ProjectEmployees
+            .Where(pe => pe.ProjectManagerId.Equals(employee.Id));
+
+        foreach (var projectEmployee in projectEmployees)
+        {
+            projectEmployee.ProjectManagerId = null;
+        }
+
         Delete(employee);
     }
 
     public void DeleteEmployeeForProject(Guid projectId, Guid employeeId, bool trackChanges)
     {
-        var projectEmployee = RepositoryContext.ProjectEmployees
-            .SingleOrDefault(pe => pe.ProjectId.Equals(projectId) && pe.EmployeeId.Equals(employeeId));
+        var projectEmployees = RepositoryContext.ProjectEmployees
+            .Where(pe => pe.ProjectId.Equals(projectId));
 
-        if (projectEmployee.ProjectManager.Id.Equals(employeeId))
+        foreach (var pe in projectEmployees)
         {
-            var projectEmployees = RepositoryContext.ProjectEmployees.Where(pe => pe.ProjectId.Equals(projectId));
-
-            foreach (var pe in projectEmployees)
+            if (pe.ProjectManagerId.Equals(employeeId))
             {
-                pe.ProjectManager = null;
+                pe.ProjectManagerId = null;
             }
         }
 
-        RepositoryContext.ProjectEmployees.Remove(projectEmployee);
+        var projectEmployee = projectEmployees
+            .SingleOrDefault(pe => pe.ProjectId.Equals(projectId) && pe.EmployeeId.Equals(employeeId));
+
+        RepositoryContext.Remove(projectEmployee);
     }
 }

@@ -19,14 +19,14 @@ public class ProjectEmployeeRepository : RepositoryBase<ProjectEmployee>, IProje
     {
         return FindByCondition(pe => pe.ProjectId.Equals(projectId), trackChanges)
             .Select(pe => pe.ProjectManager)
-            .SingleOrDefault();
+            .FirstOrDefault();
     }
 
     public Employee GetProjectManagerByEmployee(Guid employeeId, bool trackChanges)
     {
         return FindByCondition(pe => pe.EmployeeId.Equals(employeeId), trackChanges)
             .Select(pe => pe.ProjectManager)
-            .SingleOrDefault();
+            .FirstOrDefault();
     }
 
     public void CreateProjectEmployee(Project project, Employee employee)
