@@ -40,21 +40,6 @@ public class EmployeeRepository : RepositoryBase<Employee>, IEmployeeRepository
         Create(employee);
     }
 
-    public void CreateEmployeeForProject(Guid projectId, Employee employee)
-    {
-        var project = RepositoryContext.Projects
-            .SingleOrDefault(p => p.Id.Equals(projectId));
-
-        var projectManager = RepositoryContext.ProjectEmployees
-            .Where(pe => pe.ProjectId.Equals(projectId))
-            .Select(pe => pe.ProjectManager)
-            .FirstOrDefault();
-
-        var projectEmployee = new ProjectEmployee { Project = project, Employee = employee, ProjectManager = projectManager };
-
-        RepositoryContext.Add(projectEmployee);
-    }
-
     public IEnumerable<Employee> GetByIds(IEnumerable<Guid> ids, bool trackChanges)
     {
         return FindByCondition(e => ids.Contains(e.Id), trackChanges)
@@ -70,14 +55,6 @@ public class EmployeeRepository : RepositoryBase<Employee>, IEmployeeRepository
 
     public void DeleteEmployee(Employee employee)
     {
-        var projectEmployees = RepositoryContext.ProjectEmployees
-            .Where(pe => pe.ProjectManagerId.Equals(employee.Id));
-
-        foreach (var projectEmployee in projectEmployees)
-        {
-            projectEmployee.ProjectManagerId = null;
-        }
-
         Delete(employee);
     }
 }

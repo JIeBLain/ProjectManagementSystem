@@ -78,7 +78,7 @@ internal sealed class ProjectService : IProjectService
             foreach (var employeeEntity in employeeEntities)
             {
                 _repository.Employee.CreateEmployee(employeeEntity);
-                _repository.ProjectEmployee.CreateProjectEmployee(projectEntity, employeeEntity);
+                _repository.ProjectEmployee.CreateProjectEmployee(projectEntity.Id, employeeEntity.Id, null);
             }
         }
 
@@ -144,7 +144,15 @@ internal sealed class ProjectService : IProjectService
         if (projectForEmployee is null)
             throw new ProjectNotFoundException(projectId);
 
-        _repository.ProjectEmployee.DeleteProjectForEmployee(employeeId, projectId, trackChanges);
+        var projectManager = _repository.ProjectEmployee.GetProjectManagerByProject(projectId, trackChanges);
+        var projectEmployee = _repository.ProjectEmployee.GetProjectEmployee(projectId, employeeId, trackChanges);
+
+        if (projectManager is not null && projectManager.Id.Equals(employeeId))
+        {
+            projectEmployee.ProjectManagerId = null;
+        }
+
+        _repository.ProjectEmployee.DeleteProjectEmployee(projectEmployee);
         _repository.Save();
     }
 

@@ -15,6 +15,18 @@ public class ProjectEmployeeRepository : RepositoryBase<ProjectEmployee>, IProje
             .SingleOrDefault();
     }
 
+    public IEnumerable<ProjectEmployee> GetProjectEmployeesByProjectId(Guid projectId, bool trackChanges)
+    {
+        return FindByCondition(pe => pe.ProjectId.Equals(projectId), trackChanges)
+            .ToList();
+    }
+
+    public IEnumerable<ProjectEmployee> GetProjectEmployeesByEmployeeId(Guid employeeId, bool trackChanges)
+    {
+        return FindByCondition(pe => pe.EmployeeId.Equals(employeeId), trackChanges)
+            .ToList();
+    }
+
     public Employee GetProjectManagerByProject(Guid projectId, bool trackChanges)
     {
         return FindByCondition(pe => pe.ProjectId.Equals(projectId), trackChanges)
@@ -29,37 +41,13 @@ public class ProjectEmployeeRepository : RepositoryBase<ProjectEmployee>, IProje
             .FirstOrDefault();
     }
 
-    public void CreateProjectEmployee(Project project, Employee employee)
+    public void CreateProjectEmployee(Guid projectId, Guid employeeId, Guid? projectManagerId = null)
     {
         var projectEmployee = new ProjectEmployee
         {
-            ProjectId = project.Id,
-            Project = project,
-            EmployeeId = employee.Id,
-            Employee = employee
-        };
-
-        Create(projectEmployee);
-    }
-
-    public void CreateProjectManagerForProject(Guid projectId, Employee projectManager)
-    {
-        var projectEmployees = RepositoryContext.ProjectEmployees
-            .Where(pe => pe.ProjectId.Equals(projectId));
-
-        foreach (var pe in projectEmployees)
-        {
-            pe.ProjectManager = projectManager;
-        }
-
-        var project = RepositoryContext.Projects
-            .SingleOrDefault(p => p.Id.Equals(projectId));
-
-        var projectEmployee = new ProjectEmployee
-        {
-            Project = project,
-            Employee = projectManager,
-            ProjectManager = projectManager
+            ProjectId = projectId,
+            EmployeeId = employeeId,
+            ProjectManagerId = projectManagerId
         };
 
         Create(projectEmployee);
@@ -68,41 +56,5 @@ public class ProjectEmployeeRepository : RepositoryBase<ProjectEmployee>, IProje
     public void DeleteProjectEmployee(ProjectEmployee projectEmployee)
     {
         Delete(projectEmployee);
-    }
-
-    public void DeleteEmployeeForProject(Guid projectId, Guid employeeId, bool trackChanges)
-    {
-        var projectEmployees = FindByCondition(pe => pe.ProjectId.Equals(projectId), trackChanges);
-
-        foreach (var pe in projectEmployees)
-        {
-            if (pe.ProjectManagerId.Equals(employeeId))
-            {
-                pe.ProjectManagerId = null;
-            }
-        }
-
-        var projectEmployee = projectEmployees
-            .SingleOrDefault(pe => pe.ProjectId.Equals(projectId) && pe.EmployeeId.Equals(employeeId));
-
-        Delete(projectEmployee);
-    }
-
-    public void DeleteProjectForEmployee(Guid employeeId, Guid projectId, bool trackChanges)
-    {
-        var projectEmployees = FindByCondition(pe => pe.EmployeeId.Equals(employeeId), trackChanges);
-
-        foreach (var pe in projectEmployees)
-        {
-            if (pe.ProjectManagerId.Equals(employeeId))
-            {
-                pe.ProjectManagerId = null;
-            }
-        }
-
-        var projectManager = projectEmployees
-            .SingleOrDefault(pe => pe.EmployeeId.Equals(employeeId) && pe.ProjectId.Equals(projectId));
-
-        Delete(projectManager);
     }
 }
