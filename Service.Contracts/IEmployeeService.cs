@@ -18,6 +18,7 @@ public interface IEmployeeService
     IEnumerable<EmployeeDto> GetEmployeesWithoutProject(bool trackChanges);
     void DeleteEmployee(Guid id, bool trackChanges);
     void DeleteProjectFromEmployee(Guid projectId, Guid employeeId, bool trackChanges);
+    void UpdateEmployee(Guid employeeId, EmployeeForUpdateDto employeeForUpdate, bool trackChanges);
     void UpdateEmployeeForProject(Guid projectId, Guid employeeId,
         EmployeeForUpdateDto employeeForUpdate, bool projectTrackChanges, bool employeeTrackChanges);
 }
