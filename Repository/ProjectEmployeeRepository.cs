@@ -1,5 +1,6 @@
 ﻿using Contracts;
 using Entities.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Repository;
 
@@ -9,9 +10,21 @@ public class ProjectEmployeeRepository : RepositoryBase<ProjectEmployee>, IProje
     {
     }
 
+    public IEnumerable<ProjectEmployee> GetAllProjectEmployees(bool trackChanges)
+    {
+        return FindAll(trackChanges)
+            .Include(pe => pe.Project)
+            .Include(pe => pe.Employee)
+            .Include(pe => pe.ProjectManager)
+            .ToList();
+    }
+
     public ProjectEmployee GetProjectEmployee(Guid projectId, Guid employeeId, bool trackChanges)
     {
         return FindByCondition(pe => pe.ProjectId.Equals(projectId) && pe.EmployeeId.Equals(employeeId), trackChanges)
+            .Include(pe => pe.Project)
+            .Include(pe => pe.Employee)
+            .Include(pe => pe.ProjectManager)
             .SingleOrDefault();
     }
 

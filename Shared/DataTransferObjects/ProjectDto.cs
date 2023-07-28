@@ -2,9 +2,9 @@
 
 public record ProjectDto(
     Guid Id,
-    string Name,
-    string CustomerCompany,
-    string ContractorCompany,
-    DateTime StartTime,
-    DateTime EndTime,
+    string? Name,
+    string? CustomerCompany,
+    string? ContractorCompany,
+    DateTime? StartTime,
+    DateTime? EndTime,
     int Priority);
