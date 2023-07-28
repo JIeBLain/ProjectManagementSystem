@@ -132,7 +132,7 @@ internal sealed class ProjectService : IProjectService
         _repository.Save();
     }
 
-    public void DeleteProjectForEmployee(Guid employeeId, Guid projectId, bool trackChanges)
+    public void DeleteEmployeeFromProject(Guid employeeId, Guid projectId, bool trackChanges)
     {
         var employee = _repository.Employee.GetEmployee(employeeId, trackChanges);
 

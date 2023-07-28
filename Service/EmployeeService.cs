@@ -207,11 +207,31 @@ internal sealed class EmployeeService : IEmployeeService
         if (employee is null)
             throw new EmployeeNotFoundException(id);
 
+        var projectManager = _repository.ProjectEmployee.GetProjectManagerByEmployee(id, trackChanges);
+
+        if (projectManager is not null && projectManager.Id.Equals(id))
+        {
+            var projects = _repository.Project.GetProjectsByEmployee(id, trackChanges);
+
+            foreach (var project in projects)
+            {
+                var projectEmployees = _repository.ProjectEmployee.GetProjectEmployeesByProjectId(project.Id, true);
+
+                foreach (var pe in projectEmployees)
+                {
+                    if (pe.ProjectManagerId.Equals(id))
+                    {
+                        pe.ProjectManagerId = null;
+                    }
+                }
+            }
+        }
+
         _repository.Employee.DeleteEmployee(employee);
         _repository.Save();
     }
 
-    public void DeleteEmployeeForProject(Guid projectId, Guid employeeId, bool trackChanges)
+    public void DeleteProjectFromEmployee(Guid projectId, Guid employeeId, bool trackChanges)
     {
         var project = _repository.Project.GetProject(projectId, trackChanges);
 
