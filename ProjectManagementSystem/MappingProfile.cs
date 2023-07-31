@@ -23,5 +23,7 @@ public class MappingProfile : Profile
         CreateMap<EmployeeForUpdateDto, Employee>();
 
         CreateMap<ProjectEmployee, ProjectEmployeeDto>();
+
+        CreateMap<ProjectEmployeeForCreationDto, ProjectEmployee>();
     }
 }

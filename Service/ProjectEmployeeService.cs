@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Contracts;
 using Entities.Exceptions;
+using Entities.Models;
 using Service.Contracts;
 using Shared.DataTransferObjects;
 
@@ -45,5 +46,32 @@ public class ProjectEmployeeService : IProjectEmployeeService
 
         var projectEmployeeDto = _mapper.Map<ProjectEmployeeDto>(projectEmployee);
         return projectEmployeeDto;
+    }
+
+    public ProjectEmployeeDto CreateProjectEmployee(ProjectEmployeeForCreationDto projectEmployee, bool trackChanges)
+    {
+        var projectEmployeeEntity = _mapper.Map<ProjectEmployee>(projectEmployee);
+
+        var project = _repository.Project.GetProject(projectEmployeeEntity.ProjectId, trackChanges);
+
+        if (project is null)
+            throw new ProjectNotFoundException(projectEmployeeEntity.ProjectId);
+
+        var employee = _repository.Employee.GetEmployee(projectEmployeeEntity.EmployeeId, trackChanges);
+
+        if (employee is null)
+            throw new EmployeeNotFoundException(projectEmployeeEntity.EmployeeId);
+
+        var projectManager = _repository.ProjectEmployee.GetProjectManagerByProject(projectEmployeeEntity.ProjectId, trackChanges);
+
+        _repository.ProjectEmployee.CreateProjectEmployee(projectEmployeeEntity.ProjectId, projectEmployeeEntity.EmployeeId, projectEmployeeEntity.ProjectManagerId);
+        _repository.Save();
+
+        var projectEmployeeToReturn = new ProjectEmployeeDto(
+            _mapper.Map<ProjectDto>(project),
+            _mapper.Map<EmployeeDto>(employee),
+            _mapper.Map<EmployeeDto>(projectManager));
+
+        return projectEmployeeToReturn;
     }
 }
