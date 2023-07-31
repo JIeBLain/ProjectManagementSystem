@@ -1,6 +1,8 @@
 using Contracts;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.Extensions.Options;
 using NLog;
 using ProjectManagementSystem.Extensions;
 
@@ -22,8 +24,10 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     options.SuppressModelStateInvalidFilter = true;
 });
 
-builder.Services.AddControllers()
-    .AddApplicationPart(typeof(ProjectManagementSystem.Presentation.AssemblyReference).Assembly);
+builder.Services.AddControllers(config =>
+{
+    config.InputFormatters.Insert(0, GetJsonPatchInputFormatter());
+}).AddApplicationPart(typeof(ProjectManagementSystem.Presentation.AssemblyReference).Assembly);
 
 var app = builder.Build();
 
@@ -46,3 +50,11 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+NewtonsoftJsonPatchInputFormatter GetJsonPatchInputFormatter()
+{
+    return new ServiceCollection().AddLogging().AddMvc().AddNewtonsoftJson()
+    .Services.BuildServiceProvider()
+    .GetRequiredService<IOptions<MvcOptions>>().Value.InputFormatters
+    .OfType<NewtonsoftJsonPatchInputFormatter>().First();
+}
