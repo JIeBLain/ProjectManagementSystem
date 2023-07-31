@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
 using ProjectManagementSystem.Presentation.ModelBinder;
 using Service.Contracts;
 using Shared.DataTransferObjects;
@@ -97,6 +98,21 @@ public class EmployeesController : ControllerBase
             return BadRequest("EmployeeForUpdateDto object is null");
 
         _service.EmployeeService.UpdateEmployee(employeeId, employee, trackChanges: true);
+        return NoContent();
+    }
+
+    [HttpPatch("{employeeId:guid}")]
+    public IActionResult PartiallyUpdateEmployee(Guid employeeId,
+        [FromBody] JsonPatchDocument<EmployeeForUpdateDto> patchDocument)
+    {
+        if (patchDocument is null)
+            return BadRequest("patchDocument object sent from client is null.");
+
+        var result = _service.EmployeeService.GetEmployeeForPatch(employeeId, trackChanges: true);
+
+        patchDocument.ApplyTo(result.employeeToPatch);
+
+        _service.EmployeeService.SaveChangesForPatch(result.employeeToPatch, result.employeeEntity);
         return NoContent();
     }
 }

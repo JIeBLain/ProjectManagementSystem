@@ -22,6 +22,7 @@ public interface IEmployeeService
     void UpdateEmployee(Guid employeeId, EmployeeForUpdateDto employeeForUpdate, bool trackChanges);
     void UpdateEmployeeForProject(Guid projectId, Guid employeeId,
         EmployeeForUpdateDto employeeForUpdate, bool projectTrackChanges, bool employeeTrackChanges);
+    (EmployeeForUpdateDto employeeToPatch, Employee employeeEntity) GetEmployeeForPatch(Guid employeeId, bool trackChanges);
     (EmployeeForUpdateDto employeeToPatch, Employee employeeEntity) GetEmployeeForPatch(Guid projectId, Guid employeeId,
         bool projectTrackChanges, bool employeeTrackChanges);
     void SaveChangesForPatch(EmployeeForUpdateDto employeeToPatch, Employee employeeEntity);
