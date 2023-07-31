@@ -1,4 +1,5 @@
-﻿using Shared.DataTransferObjects;
+﻿using Entities.Models;
+using Shared.DataTransferObjects;
 
 namespace Service.Contracts;
 
@@ -14,4 +15,6 @@ public interface IProjectService
     void DeleteProject(Guid id, bool trackChanges);
     void DeleteEmployeeFromProject(Guid employeeId, Guid projectId, bool trackChanges);
     void UpdateProject(Guid projectId, ProjectForUpdateDto projectForUpdate, bool trackChanges);
+    (ProjectForUpdateDto projectToPatch, Project projectEntity) GetProjectForPatch(Guid projectId, bool trackChanges);
+    void SaveChangesForPatch(ProjectForUpdateDto projectToPatch, Project projectEntity);
 }

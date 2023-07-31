@@ -139,6 +139,21 @@ public class ProjectsController : ControllerBase
         return NoContent();
     }
 
+    [HttpPatch("{projectId:guid}")]
+    public IActionResult PartiallyUpdateProject(Guid projectId,
+    [FromBody] JsonPatchDocument<ProjectForUpdateDto> patchDocument)
+    {
+        if (patchDocument is null)
+            return BadRequest("patchDocument object sent from client is null.");
+
+        var result = _service.ProjectService.GetProjectForPatch(projectId, trackChanges: true);
+
+        patchDocument.ApplyTo(result.projectToPatch);
+
+        _service.ProjectService.SaveChangesForPatch(result.projectToPatch, result.projectEntity);
+        return NoContent();
+    }
+
     [HttpPatch("{projectId:guid}/employees/{employeeId:guid}")]
     public IActionResult PartiallyUpdateEmployeeForProject(Guid projectId, Guid employeeId,
         [FromBody] JsonPatchDocument<EmployeeForUpdateDto> patchDocument)

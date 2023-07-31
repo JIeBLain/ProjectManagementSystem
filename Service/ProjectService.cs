@@ -166,4 +166,21 @@ internal sealed class ProjectService : IProjectService
         _mapper.Map(projectForUpdate, projectEntity);
         _repository.Save();
     }
+
+    public (ProjectForUpdateDto projectToPatch, Project projectEntity) GetProjectForPatch(Guid projectId, bool trackChanges)
+    {
+        var projectEntity = _repository.Project.GetProject(projectId, trackChanges);
+
+        if (projectEntity is null)
+            throw new ProjectNotFoundException(projectId);
+
+        var projectToPatch = _mapper.Map<ProjectForUpdateDto>(projectEntity);
+        return (projectToPatch, projectEntity);
+    }
+
+    public void SaveChangesForPatch(ProjectForUpdateDto projectToPatch, Project projectEntity)
+    {
+        _mapper.Map(projectToPatch, projectEntity);
+        _repository.Save();
+    }
 }
