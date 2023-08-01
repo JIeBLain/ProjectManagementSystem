@@ -163,7 +163,12 @@ public class ProjectsController : ControllerBase
 
         var result = _service.ProjectService.GetProjectForPatch(projectId, trackChanges: true);
 
-        patchDocument.ApplyTo(result.projectToPatch);
+        patchDocument.ApplyTo(result.projectToPatch, ModelState);
+
+        TryValidateModel(result.projectToPatch);
+
+        if (!ModelState.IsValid)
+            return UnprocessableEntity(ModelState);
 
         _service.ProjectService.SaveChangesForPatch(result.projectToPatch, result.projectEntity);
         return NoContent();
@@ -178,7 +183,12 @@ public class ProjectsController : ControllerBase
 
         var result = _service.EmployeeService.GetEmployeeForPatch(projectId, employeeId, projectTrackChanges: false, employeeTrackChanges: true);
 
-        patchDocument.ApplyTo(result.employeeToPatch);
+        patchDocument.ApplyTo(result.employeeToPatch, ModelState);
+
+        TryValidateModel(result.employeeToPatch);
+
+        if (!ModelState.IsValid)
+            return UnprocessableEntity(ModelState);
 
         _service.EmployeeService.SaveChangesForPatch(result.employeeToPatch, result.employeeEntity);
         return NoContent();
