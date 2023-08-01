@@ -133,6 +133,9 @@ public class ProjectsController : ControllerBase
         if (employee is null)
             return BadRequest("EmployeeForUpdateDto object is null");
 
+        if (!ModelState.IsValid)
+            return UnprocessableEntity(ModelState);
+
         _service.EmployeeService.UpdateEmployeeForProject(projectId, employeeId,
             employee, projectTrackChanges: false, employeeTrackChanges: true);
         return NoContent();
@@ -143,6 +146,9 @@ public class ProjectsController : ControllerBase
     {
         if (project is null)
             return BadRequest("ProjectForUpdateDto object is null");
+
+        if (!ModelState.IsValid)
+            return UnprocessableEntity(ModelState);
 
         _service.ProjectService.UpdateProject(projectId, project, trackChanges: true);
         return NoContent();
