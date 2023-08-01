@@ -51,6 +51,9 @@ public class EmployeesController : ControllerBase
         if (employee is null)
             return BadRequest("EmployeeForCreationDto object is null");
 
+        if (!ModelState.IsValid)
+            return UnprocessableEntity(ModelState);
+
         var createdEmployee = _service.EmployeeService.CreateEmployee(employee);
         return CreatedAtRoute("EmployeeById", new { id = createdEmployee.Id }, createdEmployee);
     }

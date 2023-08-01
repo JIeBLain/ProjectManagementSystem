@@ -58,6 +58,9 @@ public class ProjectsController : ControllerBase
         if (project is null)
             return BadRequest("ProjectForCreationDto object is null");
 
+        if (!ModelState.IsValid)
+            return UnprocessableEntity(ModelState);
+
         var createdProject = _service.ProjectService.CreateProject(project);
 
         return CreatedAtRoute("ProjectById", new { id = createdProject.Id }, createdProject);
@@ -68,6 +71,9 @@ public class ProjectsController : ControllerBase
     {
         if (employee is null)
             return BadRequest("EmployeeForCreationDto object is null");
+
+        if (!ModelState.IsValid)
+            return UnprocessableEntity(ModelState);
 
         var employeeToReturn = _service.EmployeeService
             .CreateEmployeeForProject(projectId, employee, trackChanges: false);
@@ -81,6 +87,9 @@ public class ProjectsController : ControllerBase
     {
         if (projectManager is null)
             return BadRequest("EmployeeForCreationDto object is null");
+
+        if (!ModelState.IsValid)
+            return UnprocessableEntity(ModelState);
 
         var projectManagerToReturn = _service.EmployeeService
             .CreateProjectManagerForProject(projectId, projectManager, trackChanges: false);
