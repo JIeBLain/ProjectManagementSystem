@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ProjectManagementSystem.Presentation.ActionFilters;
 using Service.Contracts;
 using Shared.DataTransferObjects;
 
@@ -30,11 +31,9 @@ public class ProjectEmployeesController : ControllerBase
     }
 
     [HttpPost]
+    [ServiceFilter(typeof(ValidationFilterAttribute))]
     public async Task<IActionResult> CreateProjectEmployee([FromBody] ProjectEmployeeForCreationDto projectEmployee)
     {
-        if (projectEmployee is null)
-            return BadRequest("ProjectEmployeeForCreation object is null");
-
         var projectEmployeeDto = await _service.ProjectEmployeeService.CreateProjectEmployeeAsync(projectEmployee, false);
         return CreatedAtRoute("ProjectEmployee", new { projectId = projectEmployee.ProjectId, employeeId = projectEmployee.EmployeeId }, projectEmployeeDto);
     }

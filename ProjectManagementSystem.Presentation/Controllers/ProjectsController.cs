@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using ProjectManagementSystem.Presentation.ActionFilters;
 using ProjectManagementSystem.Presentation.ModelBinder;
 using Service.Contracts;
 using Shared.DataTransferObjects;
@@ -53,20 +54,15 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpPost]
+    [ServiceFilter(typeof(ValidationFilterAttribute))]
     public async Task<IActionResult> CreateProject([FromBody] ProjectForCreationDto project)
     {
-        if (project is null)
-            return BadRequest("ProjectForCreationDto object is null");
-
-        if (!ModelState.IsValid)
-            return UnprocessableEntity(ModelState);
-
         var createdProject = await _service.ProjectService.CreateProjectAsync(project);
-
         return CreatedAtRoute("ProjectById", new { id = createdProject.Id }, createdProject);
     }
 
     [HttpPost("{projectId:guid}/employees")]
+    [ServiceFilter(typeof(ValidationFilterAttribute))]
     public async Task<IActionResult> CreateEmployeeForProject(Guid projectId, [FromBody] EmployeeForCreationDto employee)
     {
         if (employee is null)
@@ -83,14 +79,9 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpPost("{projectId:guid}")]
+    [ServiceFilter(typeof(ValidationFilterAttribute))]
     public async Task<IActionResult> CreateProjectManagerForProject(Guid projectId, [FromBody] EmployeeForCreationDto projectManager)
     {
-        if (projectManager is null)
-            return BadRequest("EmployeeForCreationDto object is null");
-
-        if (!ModelState.IsValid)
-            return UnprocessableEntity(ModelState);
-
         var projectManagerToReturn = await _service.EmployeeService
             .CreateProjectManagerForProjectAsync(projectId, projectManager, trackChanges: false);
 
@@ -128,28 +119,18 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpPut("{projectId:guid}/employees/{employeeId:guid}")]
+    [ServiceFilter(typeof(ValidationFilterAttribute))]
     public async Task<IActionResult> UpdateEmployeeForProject(Guid projectId, Guid employeeId, [FromBody] EmployeeForUpdateDto employee)
     {
-        if (employee is null)
-            return BadRequest("EmployeeForUpdateDto object is null");
-
-        if (!ModelState.IsValid)
-            return UnprocessableEntity(ModelState);
-
         await _service.EmployeeService.UpdateEmployeeForProjectAsync(projectId, employeeId,
             employee, projectTrackChanges: false, employeeTrackChanges: true);
         return NoContent();
     }
 
     [HttpPut("{projectId:guid}")]
+    [ServiceFilter(typeof(ValidationFilterAttribute))]
     public async Task<IActionResult> UpdateProject(Guid projectId, [FromBody] ProjectForUpdateDto project)
     {
-        if (project is null)
-            return BadRequest("ProjectForUpdateDto object is null");
-
-        if (!ModelState.IsValid)
-            return UnprocessableEntity(ModelState);
-
         await _service.ProjectService.UpdateProjectAsync(projectId, project, trackChanges: true);
         return NoContent();
     }
