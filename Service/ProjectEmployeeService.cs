@@ -29,16 +29,6 @@ public class ProjectEmployeeService : IProjectEmployeeService
 
     public async Task<ProjectEmployeeDto> GetProjectEmployeeAsync(Guid projectId, Guid employeeId, bool trackChanges)
     {
-        var project = await _repository.Project.GetProjectAsync(projectId, trackChanges);
-
-        if (project is null)
-            throw new ProjectNotFoundException(projectId);
-
-        var employee = await _repository.Employee.GetEmployeeAsync(employeeId, trackChanges);
-
-        if (employee is null)
-            throw new EmployeeNotFoundException(employeeId);
-
         var projectEmployee = await _repository.ProjectEmployee.GetProjectEmployeeAsync(projectId, employeeId, trackChanges);
 
         if (projectEmployee is null)
