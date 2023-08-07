@@ -4,11 +4,11 @@ namespace Contracts;
 
 public interface IProjectRepository
 {
-    IEnumerable<Project> GetAllProjects(bool trackChanges);
-    Project GetProject(Guid projectId, bool trackChanges);
-    IEnumerable<Project> GetProjectsByEmployee(Guid employeeId, bool trackChanges);
-    Project GetProjectByEmployee(Guid employeeId, Guid projectId, bool trackChanges);
+    Task<IEnumerable<Project>> GetAllProjectsAsync(bool trackChanges);
+    Task<Project> GetProjectAsync(Guid projectId, bool trackChanges);
+    Task<IEnumerable<Project>> GetProjectsByEmployeeAsync(Guid employeeId, bool trackChanges);
+    Task<Project> GetProjectByEmployeeAsync(Guid employeeId, Guid projectId, bool trackChanges);
     void CreateProject(Project project);
-    IEnumerable<Project> GetByIds(IEnumerable<Guid> ids, bool trackChanges);
+    Task<IEnumerable<Project>> GetByIdsAsync(IEnumerable<Guid> ids, bool trackChanges);
     void DeleteProject(Project project);
 }

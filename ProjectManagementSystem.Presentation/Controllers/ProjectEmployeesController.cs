@@ -16,26 +16,26 @@ public class ProjectEmployeesController : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult GetAllProjectEmployees()
+    public async Task<IActionResult> GetAllProjectEmployees()
     {
-        var projectEmployees = _service.ProjectEmployeeService.GetAllProjectEmployees(false);
+        var projectEmployees = await _service.ProjectEmployeeService.GetAllProjectEmployeesAsync(false);
         return Ok(projectEmployees);
     }
 
     [HttpGet("projects/{projectId:guid}/employees/{employeeId:guid}", Name = "ProjectEmployee")]
-    public IActionResult GetProjectEmployee(Guid projectId, Guid employeeId)
+    public async Task<IActionResult> GetProjectEmployee(Guid projectId, Guid employeeId)
     {
-        var projectEmployee = _service.ProjectEmployeeService.GetProjectEmployee(projectId, employeeId, false);
+        var projectEmployee = await _service.ProjectEmployeeService.GetProjectEmployeeAsync(projectId, employeeId, false);
         return Ok(projectEmployee);
     }
 
     [HttpPost]
-    public IActionResult CreateProjectEmployee([FromBody] ProjectEmployeeForCreationDto projectEmployee)
+    public async Task<IActionResult> CreateProjectEmployee([FromBody] ProjectEmployeeForCreationDto projectEmployee)
     {
         if (projectEmployee is null)
             return BadRequest("ProjectEmployeeForCreation object is null");
 
-        var projectEmployeeDto = _service.ProjectEmployeeService.CreateProjectEmployee(projectEmployee, false);
+        var projectEmployeeDto = await _service.ProjectEmployeeService.CreateProjectEmployeeAsync(projectEmployee, false);
         return CreatedAtRoute("ProjectEmployee", new { projectId = projectEmployee.ProjectId, employeeId = projectEmployee.EmployeeId }, projectEmployeeDto);
     }
 }

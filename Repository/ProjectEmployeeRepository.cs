@@ -10,48 +10,48 @@ public class ProjectEmployeeRepository : RepositoryBase<ProjectEmployee>, IProje
     {
     }
 
-    public IEnumerable<ProjectEmployee> GetAllProjectEmployees(bool trackChanges)
+    public async Task<IEnumerable<ProjectEmployee>> GetAllProjectEmployeesAsync(bool trackChanges)
     {
-        return FindAll(trackChanges)
+        return await FindAll(trackChanges)
             .Include(pe => pe.Project)
             .Include(pe => pe.Employee)
             .Include(pe => pe.ProjectManager)
-            .ToList();
+            .ToListAsync();
     }
 
-    public ProjectEmployee GetProjectEmployee(Guid projectId, Guid employeeId, bool trackChanges)
+    public async Task<ProjectEmployee> GetProjectEmployeeAsync(Guid projectId, Guid employeeId, bool trackChanges)
     {
-        return FindByCondition(pe => pe.ProjectId.Equals(projectId) && pe.EmployeeId.Equals(employeeId), trackChanges)
+        return await FindByCondition(pe => pe.ProjectId.Equals(projectId) && pe.EmployeeId.Equals(employeeId), trackChanges)
             .Include(pe => pe.Project)
             .Include(pe => pe.Employee)
             .Include(pe => pe.ProjectManager)
-            .SingleOrDefault();
+            .SingleOrDefaultAsync();
     }
 
-    public IEnumerable<ProjectEmployee> GetProjectEmployeesByProjectId(Guid projectId, bool trackChanges)
+    public async Task<IEnumerable<ProjectEmployee>> GetProjectEmployeesByProjectIdAsync(Guid projectId, bool trackChanges)
     {
-        return FindByCondition(pe => pe.ProjectId.Equals(projectId), trackChanges)
-            .ToList();
+        return await FindByCondition(pe => pe.ProjectId.Equals(projectId), trackChanges)
+            .ToListAsync();
     }
 
-    public IEnumerable<ProjectEmployee> GetProjectEmployeesByEmployeeId(Guid employeeId, bool trackChanges)
+    public async Task<IEnumerable<ProjectEmployee>> GetProjectEmployeesByEmployeeIdAsync(Guid employeeId, bool trackChanges)
     {
-        return FindByCondition(pe => pe.EmployeeId.Equals(employeeId), trackChanges)
-            .ToList();
+        return await FindByCondition(pe => pe.EmployeeId.Equals(employeeId), trackChanges)
+            .ToListAsync();
     }
 
-    public Employee GetProjectManagerByProject(Guid projectId, bool trackChanges)
+    public async Task<Employee> GetProjectManagerByProjectAsync(Guid projectId, bool trackChanges)
     {
-        return FindByCondition(pe => pe.ProjectId.Equals(projectId), trackChanges)
+        return await FindByCondition(pe => pe.ProjectId.Equals(projectId), trackChanges)
             .Select(pe => pe.ProjectManager)
-            .FirstOrDefault();
+            .FirstOrDefaultAsync();
     }
 
-    public Employee GetProjectManagerByEmployee(Guid employeeId, bool trackChanges)
+    public async Task<Employee> GetProjectManagerByEmployeeAsync(Guid employeeId, bool trackChanges)
     {
-        return FindByCondition(pe => pe.EmployeeId.Equals(employeeId), trackChanges)
+        return await FindByCondition(pe => pe.EmployeeId.Equals(employeeId), trackChanges)
             .Select(pe => pe.ProjectManager)
-            .FirstOrDefault();
+            .FirstOrDefaultAsync();
     }
 
     public void CreateProjectEmployee(Guid projectId, Guid employeeId, Guid? projectManagerId = null)

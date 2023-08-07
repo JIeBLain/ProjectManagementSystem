@@ -23,8 +23,8 @@ public class RepositoryManager : IRepositoryManager
 
     public IProjectEmployeeRepository ProjectEmployee => _projectEmployeeRepository.Value;
 
-    public void Save()
+    public async Task SaveAsync()
     {
-        _repositoryContext.SaveChanges();
+        await _repositoryContext.SaveChangesAsync();
     }
 }

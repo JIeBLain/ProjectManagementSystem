@@ -4,12 +4,12 @@ namespace Contracts;
 
 public interface IEmployeeRepository
 {
-    IEnumerable<Employee> GetAllEmployees(bool trackChanges);
-    Employee GetEmployee(Guid employeeId, bool trackChanges);
-    IEnumerable<Employee> GetEmployeesByProject(Guid projectId, bool trackChanges);
-    Employee GetEmployeeByProject(Guid projectId, Guid employeeId, bool trackChanges);
+    Task<IEnumerable<Employee>> GetAllEmployeesAsync(bool trackChanges);
+    Task<Employee> GetEmployeeAsync(Guid employeeId, bool trackChanges);
+    Task<IEnumerable<Employee>> GetEmployeesByProjectAsync(Guid projectId, bool trackChanges);
+    Task<Employee> GetEmployeeByProjectAsync(Guid projectId, Guid employeeId, bool trackChanges);
     void CreateEmployee(Employee employee);
-    IEnumerable<Employee> GetByIds(IEnumerable<Guid> ids, bool trackChanges);
-    IEnumerable<Employee> GetEmployeesWithoutProject(bool trackChanges);
+    Task<IEnumerable<Employee>> GetByIdsAsync(IEnumerable<Guid> ids, bool trackChanges);
+    Task<IEnumerable<Employee>> GetEmployeesWithoutProjectAsync(bool trackChanges);
     void DeleteEmployee(Employee employee);
 }

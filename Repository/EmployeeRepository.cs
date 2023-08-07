@@ -1,5 +1,6 @@
 ﻿using Contracts;
 using Entities.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Repository;
 
@@ -9,30 +10,30 @@ public class EmployeeRepository : RepositoryBase<Employee>, IEmployeeRepository
     {
     }
 
-    public IEnumerable<Employee> GetAllEmployees(bool trackChanges)
+    public async Task<IEnumerable<Employee>> GetAllEmployeesAsync(bool trackChanges)
     {
-        return FindAll(trackChanges)
+        return await FindAll(trackChanges)
             .OrderBy(e => e.LastName)
-            .ToList();
+            .ToListAsync();
     }
 
-    public Employee GetEmployee(Guid employeeId, bool trackChanges)
+    public async Task<Employee> GetEmployeeAsync(Guid employeeId, bool trackChanges)
     {
-        return FindByCondition(e => e.Id.Equals(employeeId), trackChanges)
-            .SingleOrDefault();
+        return await FindByCondition(e => e.Id.Equals(employeeId), trackChanges)
+            .SingleOrDefaultAsync();
     }
 
-    public Employee GetEmployeeByProject(Guid projectId, Guid employeeId, bool trackChanges)
+    public async Task<Employee> GetEmployeeByProjectAsync(Guid projectId, Guid employeeId, bool trackChanges)
     {
-        return FindByCondition(e => e.ProjectEmployees.Any(pe => pe.ProjectId.Equals(projectId)), trackChanges)
-            .SingleOrDefault(e => e.Id.Equals(employeeId));
+        return await FindByCondition(e => e.ProjectEmployees.Any(pe => pe.ProjectId.Equals(projectId)), trackChanges)
+            .SingleOrDefaultAsync(e => e.Id.Equals(employeeId));
     }
 
-    public IEnumerable<Employee> GetEmployeesByProject(Guid projectId, bool trackChanges)
+    public async Task<IEnumerable<Employee>> GetEmployeesByProjectAsync(Guid projectId, bool trackChanges)
     {
-        return FindByCondition(e => e.ProjectEmployees.Any(pe => pe.ProjectId.Equals(projectId)), trackChanges)
+        return await FindByCondition(e => e.ProjectEmployees.Any(pe => pe.ProjectId.Equals(projectId)), trackChanges)
             .OrderBy(e => e.LastName)
-            .ToList();
+            .ToListAsync();
     }
 
     public void CreateEmployee(Employee employee)
@@ -40,17 +41,17 @@ public class EmployeeRepository : RepositoryBase<Employee>, IEmployeeRepository
         Create(employee);
     }
 
-    public IEnumerable<Employee> GetByIds(IEnumerable<Guid> ids, bool trackChanges)
+    public async Task<IEnumerable<Employee>> GetByIdsAsync(IEnumerable<Guid> ids, bool trackChanges)
     {
-        return FindByCondition(e => ids.Contains(e.Id), trackChanges)
-            .ToList();
+        return await FindByCondition(e => ids.Contains(e.Id), trackChanges)
+            .ToListAsync();
     }
 
-    public IEnumerable<Employee> GetEmployeesWithoutProject(bool trackChanges)
+    public async Task<IEnumerable<Employee>> GetEmployeesWithoutProjectAsync(bool trackChanges)
     {
-        return FindByCondition(e => e.ProjectEmployees.Count() == 0, trackChanges)
+        return await FindByCondition(e => e.ProjectEmployees.Count() == 0, trackChanges)
             .OrderBy(e => e.LastName)
-            .ToList();
+            .ToListAsync();
     }
 
     public void DeleteEmployee(Employee employee)
