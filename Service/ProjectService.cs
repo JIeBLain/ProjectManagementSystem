@@ -22,47 +22,31 @@ internal sealed class ProjectService : IProjectService
 
     public async Task<IEnumerable<ProjectDto>> GetAllProjectsAsync(bool trackChanges)
     {
-        var projects = await _repository.Project.GetAllProjectsAsync(trackChanges);
-        var projectsDto = _mapper.Map<IEnumerable<ProjectDto>>(projects);
+        var projectsFromDb = await _repository.Project.GetAllProjectsAsync(trackChanges);
+        var projectsDto = _mapper.Map<IEnumerable<ProjectDto>>(projectsFromDb);
         return projectsDto;
     }
 
     public async Task<ProjectDto> GetProjectAsync(Guid id, bool trackChanges)
     {
-        var project = await _repository.Project.GetProjectAsync(id, trackChanges);
-
-        if (project is null)
-            throw new ProjectNotFoundException(id);
-
-        var projectDto = _mapper.Map<ProjectDto>(project);
+        var projectDb = await GetProjectAndCheckIfItExists(id, trackChanges);
+        var projectDto = _mapper.Map<ProjectDto>(projectDb);
         return projectDto;
     }
 
     public async Task<ProjectDto> GetProjectByEmployeeAsync(Guid employeeId, Guid projectId, bool trackChanges)
     {
-        var employee = await _repository.Employee.GetEmployeeAsync(employeeId, trackChanges);
-
-        if (employee is null)
-            throw new EmployeeNotFoundException(employeeId);
-
-        var project = await _repository.Project.GetProjectByEmployeeAsync(employeeId, projectId, trackChanges);
-
-        if (project is null)
-            throw new ProjectNotFoundException(projectId);
-
-        var projectDto = _mapper.Map<ProjectDto>(project);
+        await CheckIfEmployeeExists(employeeId, trackChanges);
+        var projectDb = await GetProjectByEmployeeAndCheckIfItExists(employeeId, projectId, trackChanges);
+        var projectDto = _mapper.Map<ProjectDto>(projectDb);
         return projectDto;
     }
 
     public async Task<IEnumerable<ProjectDto>> GetProjectsByEmployeeAsync(Guid employeeId, bool trackChanges)
     {
-        var employee = await _repository.Employee.GetEmployeeAsync(employeeId, trackChanges);
-
-        if (employee is null)
-            throw new EmployeeNotFoundException(employeeId);
-
-        var projects = await _repository.Project.GetProjectsByEmployeeAsync(employeeId, trackChanges);
-        var projectsDto = _mapper.Map<IEnumerable<ProjectDto>>(projects);
+        await CheckIfEmployeeExists(employeeId, trackChanges);
+        var projectsFromDb = await _repository.Project.GetProjectsByEmployeeAsync(employeeId, trackChanges);
+        var projectsDto = _mapper.Map<IEnumerable<ProjectDto>>(projectsFromDb);
         return projectsDto;
     }
 
@@ -123,31 +107,20 @@ internal sealed class ProjectService : IProjectService
 
     public async Task DeleteProjectAsync(Guid id, bool trackChanges)
     {
-        var project = await _repository.Project.GetProjectAsync(id, trackChanges);
-
-        if (project is null)
-            throw new ProjectNotFoundException(id);
-
-        _repository.Project.DeleteProject(project);
+        var projectDb = await GetProjectAndCheckIfItExists(id, trackChanges);
+        _repository.Project.DeleteProject(projectDb);
         await _repository.SaveAsync();
     }
 
     public async Task DeleteEmployeeFromProjectAsync(Guid employeeId, Guid projectId, bool trackChanges)
     {
-        var employee = await _repository.Employee.GetEmployeeAsync(employeeId, trackChanges);
+        await CheckIfEmployeeExists(employeeId, trackChanges);
+        _ = await GetProjectByEmployeeAndCheckIfItExists(employeeId, projectId, trackChanges);
 
-        if (employee is null)
-            throw new EmployeeNotFoundException(employeeId);
+        var projectManagerDb = await _repository.ProjectEmployee.GetProjectManagerByProjectAsync(projectId, trackChanges);
+        var projectEmployeeDb = await _repository.ProjectEmployee.GetProjectEmployeeAsync(projectId, employeeId, trackChanges);
 
-        var projectForEmployee = await _repository.Project.GetProjectAsync(projectId, trackChanges);
-
-        if (projectForEmployee is null)
-            throw new ProjectNotFoundException(projectId);
-
-        var projectManager = await _repository.ProjectEmployee.GetProjectManagerByProjectAsync(projectId, trackChanges);
-        var projectEmployee = await _repository.ProjectEmployee.GetProjectEmployeeAsync(projectId, employeeId, trackChanges);
-
-        if (projectManager is not null && projectManager.Id.Equals(employeeId))
+        if (projectManagerDb is not null && projectManagerDb.Id.Equals(employeeId))
         {
             var projectEmployees = await _repository.ProjectEmployee.GetProjectEmployeesByProjectIdAsync(projectId, true);
 
@@ -157,35 +130,50 @@ internal sealed class ProjectService : IProjectService
             }
         }
 
-        _repository.ProjectEmployee.DeleteProjectEmployee(projectEmployee);
+        _repository.ProjectEmployee.DeleteProjectEmployee(projectEmployeeDb);
         await _repository.SaveAsync();
     }
 
     public async Task UpdateProjectAsync(Guid projectId, ProjectForUpdateDto projectForUpdate, bool trackChanges)
     {
-        var projectEntity = await _repository.Project.GetProjectAsync(projectId, trackChanges);
-
-        if (projectEntity is null)
-            throw new ProjectNotFoundException(projectId);
-
-        _mapper.Map(projectForUpdate, projectEntity);
+        var projectDb = await GetProjectAndCheckIfItExists(projectId, trackChanges);
+        _mapper.Map(projectForUpdate, projectDb);
         await _repository.SaveAsync();
     }
 
     public async Task<(ProjectForUpdateDto projectToPatch, Project projectEntity)> GetProjectForPatchAsync(Guid projectId, bool trackChanges)
     {
-        var projectEntity = await _repository.Project.GetProjectAsync(projectId, trackChanges);
-
-        if (projectEntity is null)
-            throw new ProjectNotFoundException(projectId);
-
-        var projectToPatch = _mapper.Map<ProjectForUpdateDto>(projectEntity);
-        return (projectToPatch, projectEntity);
+        var projectDb = await GetProjectAndCheckIfItExists(projectId, trackChanges);
+        var projectToPatch = _mapper.Map<ProjectForUpdateDto>(projectDb);
+        return (projectToPatch, projectDb);
     }
 
     public async Task SaveChangesForPatchAsync(ProjectForUpdateDto projectToPatch, Project projectEntity)
     {
         _mapper.Map(projectToPatch, projectEntity);
         await _repository.SaveAsync();
+    }
+
+    private async Task<Project> GetProjectAndCheckIfItExists(Guid id, bool trackChanges)
+    {
+        var projectDb = await _repository.Project.GetProjectAsync(id, trackChanges);
+        if (projectDb is null)
+            throw new ProjectNotFoundException(id);
+        return projectDb;
+    }
+
+    private async Task CheckIfEmployeeExists(Guid id, bool trackChanges)
+    {
+        var employeeDb = await _repository.Employee.GetEmployeeAsync(id, trackChanges);
+        if (employeeDb is null)
+            throw new EmployeeNotFoundException(id);
+    }
+
+    private async Task<Project> GetProjectByEmployeeAndCheckIfItExists(Guid employeeId, Guid projectId, bool trackChanges)
+    {
+        var projectDb = await _repository.Project.GetProjectByEmployeeAsync(employeeId, projectId, trackChanges);
+        if (projectDb is null)
+            throw new ProjectNotFoundException(projectId);
+        return projectDb;
     }
 }

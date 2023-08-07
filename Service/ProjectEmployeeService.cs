@@ -22,19 +22,19 @@ public class ProjectEmployeeService : IProjectEmployeeService
 
     public async Task<IEnumerable<ProjectEmployeeDto>> GetAllProjectEmployeesAsync(bool trackChanges)
     {
-        var projectEmployees = await _repository.ProjectEmployee.GetAllProjectEmployeesAsync(trackChanges);
-        var projectEmployeesDto = _mapper.Map<IEnumerable<ProjectEmployeeDto>>(projectEmployees);
+        var projectEmployeesFromDb = await _repository.ProjectEmployee.GetAllProjectEmployeesAsync(trackChanges);
+        var projectEmployeesDto = _mapper.Map<IEnumerable<ProjectEmployeeDto>>(projectEmployeesFromDb);
         return projectEmployeesDto;
     }
 
     public async Task<ProjectEmployeeDto> GetProjectEmployeeAsync(Guid projectId, Guid employeeId, bool trackChanges)
     {
-        var projectEmployee = await _repository.ProjectEmployee.GetProjectEmployeeAsync(projectId, employeeId, trackChanges);
+        var projectEmployeeDb = await _repository.ProjectEmployee.GetProjectEmployeeAsync(projectId, employeeId, trackChanges);
 
-        if (projectEmployee is null)
+        if (projectEmployeeDb is null)
             throw new ProjectEmployeeNotFoundException(projectId, employeeId);
 
-        var projectEmployeeDto = _mapper.Map<ProjectEmployeeDto>(projectEmployee);
+        var projectEmployeeDto = _mapper.Map<ProjectEmployeeDto>(projectEmployeeDb);
         return projectEmployeeDto;
     }
 
@@ -42,25 +42,25 @@ public class ProjectEmployeeService : IProjectEmployeeService
     {
         var projectEmployeeEntity = _mapper.Map<ProjectEmployee>(projectEmployee);
 
-        var project = await _repository.Project.GetProjectAsync(projectEmployeeEntity.ProjectId, trackChanges);
+        var projectDb = await _repository.Project.GetProjectAsync(projectEmployeeEntity.ProjectId, trackChanges);
 
-        if (project is null)
+        if (projectDb is null)
             throw new ProjectNotFoundException(projectEmployeeEntity.ProjectId);
 
-        var employee = await _repository.Employee.GetEmployeeAsync(projectEmployeeEntity.EmployeeId, trackChanges);
+        var employeeDb = await _repository.Employee.GetEmployeeAsync(projectEmployeeEntity.EmployeeId, trackChanges);
 
-        if (employee is null)
+        if (employeeDb is null)
             throw new EmployeeNotFoundException(projectEmployeeEntity.EmployeeId);
 
-        var projectManager = await _repository.ProjectEmployee.GetProjectManagerByProjectAsync(projectEmployeeEntity.ProjectId, trackChanges);
+        var projectManagerDb = await _repository.ProjectEmployee.GetProjectManagerByProjectAsync(projectEmployeeEntity.ProjectId, trackChanges);
 
         _repository.ProjectEmployee.CreateProjectEmployee(projectEmployeeEntity.ProjectId, projectEmployeeEntity.EmployeeId, projectEmployeeEntity.ProjectManagerId);
         await _repository.SaveAsync();
 
         var projectEmployeeToReturn = new ProjectEmployeeDto(
-            _mapper.Map<ProjectDto>(project),
-            _mapper.Map<EmployeeDto>(employee),
-            _mapper.Map<EmployeeDto>(projectManager));
+            _mapper.Map<ProjectDto>(projectDb),
+            _mapper.Map<EmployeeDto>(employeeDb),
+            _mapper.Map<EmployeeDto>(projectManagerDb));
 
         return projectEmployeeToReturn;
     }

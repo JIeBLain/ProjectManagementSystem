@@ -162,7 +162,7 @@ public class ProjectsController : ControllerBase
         if (patchDocument is null)
             return BadRequest("patchDocument object sent from client is null.");
 
-        var result = await _service.EmployeeService.GetEmployeeForPatchAsync(projectId, employeeId, projectTrackChanges: false, employeeTrackChanges: true);
+        var result = await _service.EmployeeService.GetEmployeeByProjectForPatchAsync(projectId, employeeId, projectTrackChanges: false, employeeTrackChanges: true);
 
         patchDocument.ApplyTo(result.employeeToPatch, ModelState);
 

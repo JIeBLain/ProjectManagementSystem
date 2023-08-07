@@ -23,7 +23,7 @@ public interface IEmployeeService
     Task UpdateEmployeeForProjectAsync(Guid projectId, Guid employeeId,
         EmployeeForUpdateDto employeeForUpdate, bool projectTrackChanges, bool employeeTrackChanges);
     Task<(EmployeeForUpdateDto employeeToPatch, Employee employeeEntity)> GetEmployeeForPatchAsync(Guid employeeId, bool trackChanges);
-    Task<(EmployeeForUpdateDto employeeToPatch, Employee employeeEntity)> GetEmployeeForPatchAsync(Guid projectId, Guid employeeId,
+    Task<(EmployeeForUpdateDto employeeToPatch, Employee employeeEntity)> GetEmployeeByProjectForPatchAsync(Guid projectId, Guid employeeId,
         bool projectTrackChanges, bool employeeTrackChanges);
     Task SaveChangesForPatchAsync(EmployeeForUpdateDto employeeToPatch, Employee employeeEntity);
 }
