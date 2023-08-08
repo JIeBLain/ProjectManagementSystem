@@ -1,6 +1,7 @@
 ﻿using Contracts;
 using Entities.Models;
 using Microsoft.EntityFrameworkCore;
+using Shared.RequestFeatures;
 
 namespace Repository;
 
@@ -10,11 +11,14 @@ public class EmployeeRepository : RepositoryBase<Employee>, IEmployeeRepository
     {
     }
 
-    public async Task<IEnumerable<Employee>> GetAllEmployeesAsync(bool trackChanges)
+    public async Task<PagedList<Employee>> GetAllEmployeesAsync(EmployeeParameters employeeParameters, bool trackChanges)
     {
-        return await FindAll(trackChanges)
+        var employees = await FindAll(trackChanges)
             .OrderBy(e => e.LastName)
             .ToListAsync();
+
+        return PagedList<Employee>
+            .ToPagedList(employees, employeeParameters.PageNumber, employeeParameters.PageSize);
     }
 
     public async Task<Employee> GetEmployeeAsync(Guid employeeId, bool trackChanges)
@@ -29,11 +33,14 @@ public class EmployeeRepository : RepositoryBase<Employee>, IEmployeeRepository
             .SingleOrDefaultAsync(e => e.Id.Equals(employeeId));
     }
 
-    public async Task<IEnumerable<Employee>> GetEmployeesByProjectAsync(Guid projectId, bool trackChanges)
+    public async Task<PagedList<Employee>> GetEmployeesByProjectAsync(Guid projectId, EmployeeParameters employeeParameters, bool trackChanges)
     {
-        return await FindByCondition(e => e.ProjectEmployees.Any(pe => pe.ProjectId.Equals(projectId)), trackChanges)
+        var employees = await FindByCondition(e => e.ProjectEmployees.Any(pe => pe.ProjectId.Equals(projectId)), trackChanges)
             .OrderBy(e => e.LastName)
             .ToListAsync();
+
+        return PagedList<Employee>
+            .ToPagedList(employees, employeeParameters.PageNumber, employeeParameters.PageSize);
     }
 
     public void CreateEmployee(Employee employee)
@@ -47,11 +54,14 @@ public class EmployeeRepository : RepositoryBase<Employee>, IEmployeeRepository
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<Employee>> GetEmployeesWithoutProjectAsync(bool trackChanges)
+    public async Task<PagedList<Employee>> GetEmployeesWithoutProjectAsync(EmployeeParameters employeeParameters, bool trackChanges)
     {
-        return await FindByCondition(e => e.ProjectEmployees.Count() == 0, trackChanges)
+        var employees = await FindByCondition(e => e.ProjectEmployees.Count() == 0, trackChanges)
             .OrderBy(e => e.LastName)
             .ToListAsync();
+
+        return PagedList<Employee>
+            .ToPagedList(employees, employeeParameters.PageNumber, employeeParameters.PageSize);
     }
 
     public void DeleteEmployee(Employee employee)

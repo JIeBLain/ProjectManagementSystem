@@ -2,6 +2,8 @@
 using ProjectManagementSystem.Presentation.ActionFilters;
 using Service.Contracts;
 using Shared.DataTransferObjects;
+using Shared.RequestFeatures;
+using System.Text.Json;
 
 namespace ProjectManagementSystem.Presentation.Controllers;
 
@@ -17,10 +19,13 @@ public class ProjectEmployeesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllProjectEmployees()
+    public async Task<IActionResult> GetAllProjectEmployees([FromQuery] ProjectEmployeeParameters projectEmployeeParameters)
     {
-        var projectEmployees = await _service.ProjectEmployeeService.GetAllProjectEmployeesAsync(false);
-        return Ok(projectEmployees);
+        var pagedResult = await _service.ProjectEmployeeService.GetAllProjectEmployeesAsync(projectEmployeeParameters, trackChanges: false);
+
+        Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(pagedResult.metaData));
+
+        return Ok(pagedResult.projectEmployees);
     }
 
     [HttpGet("projects/{projectId:guid}/employees/{employeeId:guid}", Name = "ProjectEmployee")]

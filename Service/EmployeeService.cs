@@ -4,6 +4,7 @@ using Entities.Exceptions;
 using Entities.Models;
 using Service.Contracts;
 using Shared.DataTransferObjects;
+using Shared.RequestFeatures;
 
 namespace Service;
 
@@ -20,11 +21,11 @@ internal sealed class EmployeeService : IEmployeeService
         _mapper = mapper;
     }
 
-    public async Task<IEnumerable<EmployeeDto>> GetAllEmployeesAsync(bool trackChanges)
+    public async Task<(IEnumerable<EmployeeDto> employees, MetaData metaData)> GetAllEmployeesAsync(EmployeeParameters employeeParameters, bool trackChanges)
     {
-        var employeesFromDb = await _repository.Employee.GetAllEmployeesAsync(trackChanges);
-        var employeesDto = _mapper.Map<IEnumerable<EmployeeDto>>(employeesFromDb);
-        return employeesDto;
+        var employeesWithMetaData = await _repository.Employee.GetAllEmployeesAsync(employeeParameters, trackChanges);
+        var employeesDto = _mapper.Map<IEnumerable<EmployeeDto>>(employeesWithMetaData);
+        return (employees: employeesDto, metaData: employeesWithMetaData.MetaData);
     }
 
     public async Task<EmployeeDto> GetEmployeeAsync(Guid id, bool trackChanges)
@@ -42,12 +43,15 @@ internal sealed class EmployeeService : IEmployeeService
         return employeeDto;
     }
 
-    public async Task<IEnumerable<EmployeeDto>> GetEmployeesByProjectAsync(Guid projectId, bool trackChanges)
+    public async Task<(IEnumerable<EmployeeDto> employees, MetaData metaData)> GetEmployeesByProjectAsync
+        (Guid projectId, EmployeeParameters employeeParameters, bool trackChanges)
     {
         await CheckIfProjectExists(projectId, trackChanges);
-        var employeesFromDb = await _repository.Employee.GetEmployeesByProjectAsync(projectId, trackChanges);
-        var employeesDto = _mapper.Map<IEnumerable<EmployeeDto>>(employeesFromDb);
-        return employeesDto;
+
+        var employeesWithMetaData = await _repository.Employee.GetEmployeesByProjectAsync(projectId, employeeParameters, trackChanges);
+        var employeesDto = _mapper.Map<IEnumerable<EmployeeDto>>(employeesWithMetaData);
+
+        return (employees: employeesDto, metaData: employeesWithMetaData.MetaData);
     }
 
     public async Task<EmployeeDto> GetProjectManagerByProjectAsync(Guid projectId, bool trackChanges)
@@ -160,11 +164,11 @@ internal sealed class EmployeeService : IEmployeeService
         return (employees: employeeCollectionToReturn, ids);
     }
 
-    public async Task<IEnumerable<EmployeeDto>> GetEmployeesWithoutProjectAsync(bool trackChanges)
+    public async Task<(IEnumerable<EmployeeDto> employees, MetaData metaData)> GetEmployeesWithoutProjectAsync(EmployeeParameters employeeParameters, bool trackChanges)
     {
-        var employeesFromDb = await _repository.Employee.GetEmployeesWithoutProjectAsync(trackChanges);
-        var employeesDto = _mapper.Map<IEnumerable<EmployeeDto>>(employeesFromDb);
-        return employeesDto;
+        var employeesWithMetaData = await _repository.Employee.GetEmployeesWithoutProjectAsync(employeeParameters, trackChanges);
+        var employeesDto = _mapper.Map<IEnumerable<EmployeeDto>>(employeesWithMetaData);
+        return (employees: employeesDto, metaData: employeesWithMetaData.MetaData);
     }
 
     public async Task DeleteEmployeeAsync(Guid id, bool trackChanges)

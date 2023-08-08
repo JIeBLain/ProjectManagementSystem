@@ -1,10 +1,11 @@
 ﻿using Entities.Models;
+using Shared.RequestFeatures;
 
 namespace Contracts;
 
 public interface IProjectEmployeeRepository
 {
-    Task<IEnumerable<ProjectEmployee>> GetAllProjectEmployeesAsync(bool trackChanges);
+    Task<PagedList<ProjectEmployee>> GetAllProjectEmployeesAsync(ProjectEmployeeParameters projectEmployeeParameters, bool trackChanges);
     Task<ProjectEmployee> GetProjectEmployeeAsync(Guid projectId, Guid employeeId, bool trackChanges);
     Task<IEnumerable<ProjectEmployee>> GetProjectEmployeesByProjectIdAsync(Guid projectId, bool trackChanges);
     Task<IEnumerable<ProjectEmployee>> GetProjectEmployeesByEmployeeIdAsync(Guid employeeId, bool trackChanges);

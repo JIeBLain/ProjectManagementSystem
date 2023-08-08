@@ -4,6 +4,7 @@ using Entities.Exceptions;
 using Entities.Models;
 using Service.Contracts;
 using Shared.DataTransferObjects;
+using Shared.RequestFeatures;
 
 namespace Service;
 
@@ -20,11 +21,12 @@ public class ProjectEmployeeService : IProjectEmployeeService
         _mapper = mapper;
     }
 
-    public async Task<IEnumerable<ProjectEmployeeDto>> GetAllProjectEmployeesAsync(bool trackChanges)
+    public async Task<(IEnumerable<ProjectEmployeeDto> projectEmployees, MetaData metaData)> GetAllProjectEmployeesAsync
+        (ProjectEmployeeParameters projectEmployeeParameters, bool trackChanges)
     {
-        var projectEmployeesFromDb = await _repository.ProjectEmployee.GetAllProjectEmployeesAsync(trackChanges);
-        var projectEmployeesDto = _mapper.Map<IEnumerable<ProjectEmployeeDto>>(projectEmployeesFromDb);
-        return projectEmployeesDto;
+        var projectEmployeesWithMetaData = await _repository.ProjectEmployee.GetAllProjectEmployeesAsync(projectEmployeeParameters, trackChanges);
+        var projectEmployeesDto = _mapper.Map<IEnumerable<ProjectEmployeeDto>>(projectEmployeesWithMetaData);
+        return (projectEmployees: projectEmployeesDto, metaData: projectEmployeesWithMetaData.MetaData);
     }
 
     public async Task<ProjectEmployeeDto> GetProjectEmployeeAsync(Guid projectId, Guid employeeId, bool trackChanges)

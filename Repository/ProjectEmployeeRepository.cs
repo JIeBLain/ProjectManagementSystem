@@ -1,6 +1,7 @@
 ﻿using Contracts;
 using Entities.Models;
 using Microsoft.EntityFrameworkCore;
+using Shared.RequestFeatures;
 
 namespace Repository;
 
@@ -10,13 +11,16 @@ public class ProjectEmployeeRepository : RepositoryBase<ProjectEmployee>, IProje
     {
     }
 
-    public async Task<IEnumerable<ProjectEmployee>> GetAllProjectEmployeesAsync(bool trackChanges)
+    public async Task<PagedList<ProjectEmployee>> GetAllProjectEmployeesAsync(ProjectEmployeeParameters projectEmployeeParameters, bool trackChanges)
     {
-        return await FindAll(trackChanges)
+        var projectEmployees = await FindAll(trackChanges)
             .Include(pe => pe.Project)
             .Include(pe => pe.Employee)
             .Include(pe => pe.ProjectManager)
             .ToListAsync();
+
+        return PagedList<ProjectEmployee>
+            .ToPagedList(projectEmployees, projectEmployeeParameters.PageNumber, projectEmployeeParameters.PageSize);
     }
 
     public async Task<ProjectEmployee> GetProjectEmployeeAsync(Guid projectId, Guid employeeId, bool trackChanges)

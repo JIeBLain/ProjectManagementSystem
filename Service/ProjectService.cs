@@ -4,6 +4,7 @@ using Entities.Exceptions;
 using Entities.Models;
 using Service.Contracts;
 using Shared.DataTransferObjects;
+using Shared.RequestFeatures;
 
 namespace Service;
 
@@ -20,11 +21,11 @@ internal sealed class ProjectService : IProjectService
         _mapper = mapper;
     }
 
-    public async Task<IEnumerable<ProjectDto>> GetAllProjectsAsync(bool trackChanges)
+    public async Task<(IEnumerable<ProjectDto> projects, MetaData metaData)> GetAllProjectsAsync(ProjectParameters projectParameters, bool trackChanges)
     {
-        var projectsFromDb = await _repository.Project.GetAllProjectsAsync(trackChanges);
-        var projectsDto = _mapper.Map<IEnumerable<ProjectDto>>(projectsFromDb);
-        return projectsDto;
+        var projectsWithMetaData = await _repository.Project.GetAllProjectsAsync(projectParameters, trackChanges);
+        var projectsDto = _mapper.Map<IEnumerable<ProjectDto>>(projectsWithMetaData);
+        return (projects: projectsDto, metaData: projectsWithMetaData.MetaData);
     }
 
     public async Task<ProjectDto> GetProjectAsync(Guid id, bool trackChanges)

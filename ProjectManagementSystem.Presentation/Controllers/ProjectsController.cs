@@ -4,6 +4,8 @@ using ProjectManagementSystem.Presentation.ActionFilters;
 using ProjectManagementSystem.Presentation.ModelBinder;
 using Service.Contracts;
 using Shared.DataTransferObjects;
+using Shared.RequestFeatures;
+using System.Text.Json;
 
 namespace ProjectManagementSystem.Presentation.Controllers;
 
@@ -19,10 +21,13 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetProjects()
+    public async Task<IActionResult> GetProjects([FromQuery] ProjectParameters projectParameters)
     {
-        var projects = await _service.ProjectService.GetAllProjectsAsync(trackChanges: false);
-        return Ok(projects);
+        var pagedResult = await _service.ProjectService.GetAllProjectsAsync(projectParameters, trackChanges: false);
+
+        Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(pagedResult.metaData));
+
+        return Ok(pagedResult.projects);
     }
 
     [HttpGet("{id:guid}", Name = "ProjectById")]
@@ -33,10 +38,13 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpGet("{projectId:guid}/employees")]
-    public async Task<IActionResult> GetEmployeesByProject(Guid projectId)
+    public async Task<IActionResult> GetEmployeesByProject(Guid projectId, [FromQuery] EmployeeParameters employeeParameters)
     {
-        var employees = await _service.EmployeeService.GetEmployeesByProjectAsync(projectId, trackChanges: false);
-        return Ok(employees);
+        var pagedResult = await _service.EmployeeService.GetEmployeesByProjectAsync(projectId, employeeParameters, trackChanges: false);
+
+        Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(pagedResult.metaData));
+
+        return Ok(pagedResult.employees);
     }
 
     [HttpGet("{projectId:guid}/employees/{employeeId:guid}", Name = "EmployeeByProject")]
