@@ -3,7 +3,7 @@
 public record EmployeeDto(
     Guid Id,
     string FullName,
-    DateTime BirthDate,
+    int Age,
     string Gender,
     string Email,
     string Phone);
