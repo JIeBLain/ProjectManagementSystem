@@ -12,8 +12,7 @@ public class MappingProfile : Profile
 
         CreateMap<Employee, EmployeeDto>()
             .ForCtorParam("FullName",
-            opt => opt.MapFrom(e => string.Join(' ', e.LastName, e.FirstName, e.PatronymicName)))
-            .ForCtorParam("Age", opt => opt.MapFrom(e => CalculateAge(e.BirthDate)));
+            opt => opt.MapFrom(e => string.Join(' ', e.LastName, e.FirstName, e.PatronymicName)));
 
         CreateMap<ProjectEmployee, ProjectEmployeeDto>();
 
@@ -26,16 +25,5 @@ public class MappingProfile : Profile
         CreateMap<ProjectForUpdateDto, Project>().ReverseMap();
 
         CreateMap<EmployeeForUpdateDto, Employee>().ReverseMap();
-    }
-
-    private static int CalculateAge(DateTime birthdate)
-    {
-        var today = DateTime.Today;
-        var age = today.Year - birthdate.Year;
-
-        if (birthdate.Date > today.AddYears(-age))
-            age--;
-
-        return age;
     }
 }
