@@ -23,6 +23,9 @@ internal sealed class ProjectService : IProjectService
 
     public async Task<(IEnumerable<ProjectDto> projects, MetaData metaData)> GetAllProjectsAsync(ProjectParameters projectParameters, bool trackChanges)
     {
+        if (!projectParameters.ValidPriorityRange)
+            throw new PriorityRangeBadRequestException();
+
         var projectsWithMetaData = await _repository.Project.GetAllProjectsAsync(projectParameters, trackChanges);
         var projectsDto = _mapper.Map<IEnumerable<ProjectDto>>(projectsWithMetaData);
         return (projects: projectsDto, metaData: projectsWithMetaData.MetaData);

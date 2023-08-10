@@ -14,6 +14,7 @@ public class ProjectRepository : RepositoryBase<Project>, IProjectRepository
     public async Task<PagedList<Project>> GetAllProjectsAsync(ProjectParameters projectParameters, bool trackChanges)
     {
         var projects = await FindAll(trackChanges)
+            .Where(p => p.Priority >= projectParameters.MinPriority && p.Priority <= projectParameters.MaxPriority)
             .OrderBy(p => p.Name)
             .ToListAsync();
 
