@@ -23,6 +23,9 @@ internal sealed class EmployeeService : IEmployeeService
 
     public async Task<(IEnumerable<EmployeeDto> employees, MetaData metaData)> GetAllEmployeesAsync(EmployeeParameters employeeParameters, bool trackChanges)
     {
+        if (!employeeParameters.ValidGender)
+            throw new GenderBadRequestException();
+
         var employeesWithMetaData = await _repository.Employee.GetAllEmployeesAsync(employeeParameters, trackChanges);
         var employeesDto = _mapper.Map<IEnumerable<EmployeeDto>>(employeesWithMetaData);
         return (employees: employeesDto, metaData: employeesWithMetaData.MetaData);
@@ -46,6 +49,9 @@ internal sealed class EmployeeService : IEmployeeService
     public async Task<(IEnumerable<EmployeeDto> employees, MetaData metaData)> GetEmployeesByProjectAsync
         (Guid projectId, EmployeeParameters employeeParameters, bool trackChanges)
     {
+        if (!employeeParameters.ValidGender)
+            throw new GenderBadRequestException();
+
         await CheckIfProjectExists(projectId, trackChanges);
 
         var employeesWithMetaData = await _repository.Employee.GetEmployeesByProjectAsync(projectId, employeeParameters, trackChanges);
@@ -166,6 +172,9 @@ internal sealed class EmployeeService : IEmployeeService
 
     public async Task<(IEnumerable<EmployeeDto> employees, MetaData metaData)> GetEmployeesWithoutProjectAsync(EmployeeParameters employeeParameters, bool trackChanges)
     {
+        if (!employeeParameters.ValidGender)
+            throw new GenderBadRequestException();
+
         var employeesWithMetaData = await _repository.Employee.GetEmployeesWithoutProjectAsync(employeeParameters, trackChanges);
         var employeesDto = _mapper.Map<IEnumerable<EmployeeDto>>(employeesWithMetaData);
         return (employees: employeesDto, metaData: employeesWithMetaData.MetaData);
