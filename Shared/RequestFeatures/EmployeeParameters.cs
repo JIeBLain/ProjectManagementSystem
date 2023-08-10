@@ -10,7 +10,7 @@ public class EmployeeParameters : RequestParameters
     {
         get
         {
-            if (string.IsNullOrEmpty(Gender))
+            if (string.IsNullOrWhiteSpace(Gender))
                 return true;
 
             var gender = Enum.TryParse<Gender>(Gender, true, out var result)
@@ -20,4 +20,6 @@ public class EmployeeParameters : RequestParameters
             return Enum.IsDefined(typeof(Gender), gender);
         }
     }
+
+    public string? SearchTerm { get; set; }
 }
