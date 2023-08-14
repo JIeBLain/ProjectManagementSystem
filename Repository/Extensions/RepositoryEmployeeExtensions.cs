@@ -1,5 +1,6 @@
 ﻿using Entities.Enums;
 using Entities.Models;
+using Repository.Extensions.SearchEngineLibrary;
 
 namespace Repository.Extensions;
 
@@ -18,9 +19,10 @@ public static class RepositoryEmployeeExtensions
         if (string.IsNullOrWhiteSpace(searchTerm))
             return employees;
 
-        var lowerCaseTerm = searchTerm.Trim().ToLower();
+        var searchEngine = new SearchEngine(employees);
+        var employeeIds = SearchEngine.Search(searchTerm);
 
-        return employees.Where(e => e.LastName.ToLower().Contains(lowerCaseTerm));
+        return employees.Where(e => employeeIds.Contains(e.Id));
     }
 
     private static Gender ConvertStringToGender(string gender)
