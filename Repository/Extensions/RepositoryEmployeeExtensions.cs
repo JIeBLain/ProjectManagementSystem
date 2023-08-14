@@ -21,8 +21,9 @@ public static class RepositoryEmployeeExtensions
 
         var searchEngine = new EmployeeSearchEngine();
         searchEngine.AddEmployeesToIndex(employees);
+        var employeeIds = searchEngine.SearchEmployeeIds(searchTerm);
 
-        return searchEngine.Search(searchTerm);
+        return employees.Where(e => employeeIds.Contains(e.Id));
     }
 
     private static Gender ConvertStringToGender(string gender)
