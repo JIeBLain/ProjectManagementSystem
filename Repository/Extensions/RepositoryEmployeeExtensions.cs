@@ -19,10 +19,10 @@ public static class RepositoryEmployeeExtensions
         if (string.IsNullOrWhiteSpace(searchTerm))
             return employees;
 
-        var searchEngine = new SearchEngine(employees);
-        var employeeIds = SearchEngine.Search(searchTerm);
+        var searchEngine = new EmployeeSearchEngine();
+        searchEngine.AddEmployeesToIndex(employees);
 
-        return employees.Where(e => employeeIds.Contains(e.Id));
+        return searchEngine.Search(searchTerm);
     }
 
     private static Gender ConvertStringToGender(string gender)
