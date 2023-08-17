@@ -1,6 +1,6 @@
 ﻿using Entities.Enums;
 using Entities.Models;
-using Repository.Extensions.SearchEngineLibrary;
+using Repository.Extensions.LuceneSearchLibrary;
 
 namespace Repository.Extensions;
 
@@ -19,11 +19,26 @@ public static class RepositoryEmployeeExtensions
         if (string.IsNullOrWhiteSpace(searchTerm))
             return employees;
 
-        var searchEngine = new EmployeeSearchEngine();
-        searchEngine.AddEmployeesToIndex(employees);
-        var employeeIds = searchEngine.SearchEmployeeIds(searchTerm);
+        var searchEngine = new LuceneSearchEngine<Employee>(employees.ToList());
+        var documents = searchEngine.Search(searchTerm, 1000);
 
-        return employees.Where(e => employeeIds.Contains(e.Id));
+        var searchedEmployees = new List<Employee>();
+        foreach (var doc in documents)
+        {
+            searchedEmployees.Add(new Employee
+            {
+                Id = new Guid(doc.Get("Id")),
+                FirstName = doc.Get("FirstName"),
+                LastName = doc.Get("LastName"),
+                PatronymicName = doc.Get("PatronymicName"),
+                BirthDate = DateTime.Parse(doc.Get("BirthDate")),
+                Gender = Enum.Parse<Gender>(doc.Get("Gender")),
+                Email = doc.Get("Email"),
+                Phone = doc.Get("Phone")
+            });
+        }
+
+        return employees.Where(employee => searchedEmployees.Contains(employee));
     }
 
     private static Gender ConvertStringToGender(string gender)
