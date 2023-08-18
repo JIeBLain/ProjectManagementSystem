@@ -19,7 +19,7 @@ public static class RepositoryEmployeeExtensions
         if (string.IsNullOrWhiteSpace(searchTerm))
             return employees;
 
-        var searchEngine = new LuceneSearchEngine<Employee>(employees.ToList());
+        var searchEngine = new LuceneSearchEngine<Employee>(employees);
         var documents = searchEngine.Search(searchTerm, 1000);
 
         var searchedEmployees = new List<Employee>();

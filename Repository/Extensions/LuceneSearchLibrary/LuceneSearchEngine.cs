@@ -16,7 +16,7 @@ public class LuceneSearchEngine<T> where T : class
     private readonly IndexWriter _indexWriter;
     private HashSet<string> _fields;
 
-    public LuceneSearchEngine(List<T> data)
+    public LuceneSearchEngine(IQueryable<T> data)
     {
         _analyzer = new StandardAnalyzer(Version);
         _directory = new RAMDirectory();
@@ -45,7 +45,7 @@ public class LuceneSearchEngine<T> where T : class
         return documents;
     }
 
-    private void Index(List<T> data)
+    private void Index(IQueryable<T> data)
     {
         var documents = new List<Document>();
 
