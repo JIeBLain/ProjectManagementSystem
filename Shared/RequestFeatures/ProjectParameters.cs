@@ -9,4 +9,6 @@ public class ProjectParameters : RequestParameters
         MaxPriority >= MinPriority
         && MinPriority >= 1 && MinPriority <= 3
         && MaxPriority <= 3 && MaxPriority >= 1;
+
+    public string? SearchTerm { get; set; }
 }
