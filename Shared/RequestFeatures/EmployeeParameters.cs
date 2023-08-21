@@ -4,6 +4,11 @@ namespace Shared.RequestFeatures;
 
 public class EmployeeParameters : RequestParameters
 {
+    public EmployeeParameters()
+    {
+        OrderBy = "lastName";
+    }
+
     public string? Gender { get; set; }
 
     public bool ValidGender

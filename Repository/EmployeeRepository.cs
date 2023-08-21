@@ -17,7 +17,7 @@ public class EmployeeRepository : RepositoryBase<Employee>, IEmployeeRepository
         var employees = await FindAll(trackChanges)
             .FilterEmployees(employeeParameters.Gender)
             .Search(employeeParameters.SearchTerm)
-            .OrderBy(e => e.LastName)
+            .Sort(employeeParameters.OrderBy)
             .ToListAsync();
 
         return PagedList<Employee>
@@ -41,7 +41,7 @@ public class EmployeeRepository : RepositoryBase<Employee>, IEmployeeRepository
         var employees = await FindByCondition(e => e.ProjectEmployees.Any(pe => pe.ProjectId.Equals(projectId)), trackChanges)
             .FilterEmployees(employeeParameters.Gender)
             .Search(employeeParameters.SearchTerm)
-            .OrderBy(e => e.LastName)
+            .Sort(employeeParameters.OrderBy)
             .ToListAsync();
 
         return PagedList<Employee>
@@ -64,7 +64,7 @@ public class EmployeeRepository : RepositoryBase<Employee>, IEmployeeRepository
         var employees = await FindByCondition(e => e.ProjectEmployees.Count() == 0, trackChanges)
             .FilterEmployees(employeeParameters.Gender)
             .Search(employeeParameters.SearchTerm)
-            .OrderBy(e => e.LastName)
+            .Sort(employeeParameters.OrderBy)
             .ToListAsync();
 
         return PagedList<Employee>

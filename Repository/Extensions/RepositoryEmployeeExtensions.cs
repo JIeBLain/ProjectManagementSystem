@@ -1,5 +1,7 @@
 ﻿using Entities.Enums;
 using Entities.Models;
+using Repository.Extensions.Utility;
+using System.Linq.Dynamic.Core;
 
 namespace Repository.Extensions;
 
@@ -27,6 +29,19 @@ public static class RepositoryEmployeeExtensions
             || e.LastName.EndsWith(lowerCaseTerm)
             || e.FirstName.EndsWith(lowerCaseTerm)
             || e.PatronymicName.EndsWith(lowerCaseTerm));
+    }
+
+    public static IQueryable<Employee> Sort(this IQueryable<Employee> employees, string orderByQueryString)
+    {
+        if (string.IsNullOrWhiteSpace(orderByQueryString))
+            return employees.OrderBy(e => e.LastName);
+
+        var orderQuery = OrderQueryBuilder.CreateOrderQuery<Employee>(orderByQueryString);
+
+        if (string.IsNullOrWhiteSpace(orderQuery))
+            return employees.OrderBy(e => e.LastName);
+
+        return employees.OrderBy(orderQuery);
     }
 
     private static Gender ConvertStringToGender(string gender)
