@@ -1,6 +1,7 @@
 ﻿using Contracts;
 using Entities.Models;
 using Microsoft.EntityFrameworkCore;
+using Repository.Extensions;
 using Shared.RequestFeatures;
 
 namespace Repository;
@@ -14,7 +15,8 @@ public class ProjectRepository : RepositoryBase<Project>, IProjectRepository
     public async Task<PagedList<Project>> GetAllProjectsAsync(ProjectParameters projectParameters, bool trackChanges)
     {
         var projects = await FindAll(trackChanges)
-            .Where(p => p.Priority >= projectParameters.MinPriority && p.Priority <= projectParameters.MaxPriority)
+            .FilterProjects(projectParameters.MinPriority, projectParameters.MaxPriority)
+            .Search(projectParameters.SearchTerm)
             .OrderBy(p => p.Name)
             .ToListAsync();
 
