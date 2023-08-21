@@ -9,6 +9,8 @@ public class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
 {
     public void Configure(EntityTypeBuilder<Employee> builder)
     {
+        builder.HasIndex(e => new { e.LastName, e.FirstName, e.PatronymicName });
+
         builder.HasData(
             new Employee
             {
