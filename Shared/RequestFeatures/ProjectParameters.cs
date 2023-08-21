@@ -2,6 +2,11 @@
 
 public class ProjectParameters : RequestParameters
 {
+    public ProjectParameters()
+    {
+        OrderBy = "name";
+    }
+
     public int MinPriority { get; set; } = 1;
     public int MaxPriority { get; set; } = 3;
 

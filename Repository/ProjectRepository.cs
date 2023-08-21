@@ -17,7 +17,7 @@ public class ProjectRepository : RepositoryBase<Project>, IProjectRepository
         var projects = await FindAll(trackChanges)
             .FilterProjects(projectParameters.MinPriority, projectParameters.MaxPriority)
             .Search(projectParameters.SearchTerm)
-            .OrderBy(p => p.Name)
+            .Sort(projectParameters.OrderBy)
             .ToListAsync();
 
         return PagedList<Project>
