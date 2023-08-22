@@ -59,10 +59,12 @@ public class ProjectEmployeeService : IProjectEmployeeService
         _repository.ProjectEmployee.CreateProjectEmployee(projectEmployeeEntity.ProjectId, projectEmployeeEntity.EmployeeId, projectEmployeeEntity.ProjectManagerId);
         await _repository.SaveAsync();
 
-        var projectEmployeeToReturn = new ProjectEmployeeDto(
-            _mapper.Map<ProjectDto>(projectDb),
-            _mapper.Map<EmployeeDto>(employeeDb),
-            _mapper.Map<EmployeeDto>(projectManagerDb));
+        var projectEmployeeToReturn = new ProjectEmployeeDto
+        {
+            Project = _mapper.Map<ProjectDto>(projectDb),
+            Employee = _mapper.Map<EmployeeDto>(employeeDb),
+            ProjectManager = _mapper.Map<EmployeeDto>(projectManagerDb)
+        };
 
         return projectEmployeeToReturn;
     }

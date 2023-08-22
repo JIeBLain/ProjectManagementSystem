@@ -1,15 +1,14 @@
 ﻿using Entities.Models;
 using Shared.DataTransferObjects;
 using Shared.RequestFeatures;
-using System.Dynamic;
 
 namespace Service.Contracts;
 
 public interface IEmployeeService
 {
-    Task<(IEnumerable<ExpandoObject> employees, MetaData metaData)> GetAllEmployeesAsync(EmployeeParameters employeeParameters, bool trackChanges);
+    Task<(IEnumerable<Entity> employees, MetaData metaData)> GetAllEmployeesAsync(EmployeeParameters employeeParameters, bool trackChanges);
     Task<EmployeeDto> GetEmployeeAsync(Guid id, bool trackChanges);
-    Task<(IEnumerable<ExpandoObject> employees, MetaData metaData)> GetEmployeesByProjectAsync(Guid projectId, EmployeeParameters employeeParameters, bool trackChanges);
+    Task<(IEnumerable<Entity> employees, MetaData metaData)> GetEmployeesByProjectAsync(Guid projectId, EmployeeParameters employeeParameters, bool trackChanges);
     Task<EmployeeDto> GetEmployeeByProjectAsync(Guid projectId, Guid employeeId, bool trackChanges);
     Task<EmployeeDto> GetProjectManagerByProjectAsync(Guid projectId, bool trackChanges);
     Task<EmployeeDto> GetProjectManagerByEmployeeAsync(Guid employeeId, bool trackChanges);
@@ -18,7 +17,7 @@ public interface IEmployeeService
     Task<EmployeeDto> CreateProjectManagerForProjectAsync(Guid projectId, EmployeeForCreationDto projectManagerForCreation, bool trackChanges);
     Task<IEnumerable<EmployeeDto>> GetByIdsAsync(IEnumerable<Guid> ids, bool trackChanges);
     Task<(IEnumerable<EmployeeDto> employees, string ids)> CreateEmployeeCollectionAsync(IEnumerable<EmployeeForCreationDto> employeeCollection);
-    Task<(IEnumerable<ExpandoObject> employees, MetaData metaData)> GetEmployeesWithoutProjectAsync(EmployeeParameters employeeParameters, bool trackChanges);
+    Task<(IEnumerable<Entity> employees, MetaData metaData)> GetEmployeesWithoutProjectAsync(EmployeeParameters employeeParameters, bool trackChanges);
     Task DeleteEmployeeAsync(Guid id, bool trackChanges);
     Task DeleteProjectFromEmployeeAsync(Guid projectId, Guid employeeId, bool trackChanges);
     Task UpdateEmployeeAsync(Guid employeeId, EmployeeForUpdateDto employeeForUpdate, bool trackChanges);

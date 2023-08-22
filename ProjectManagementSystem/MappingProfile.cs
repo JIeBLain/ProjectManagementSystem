@@ -11,7 +11,7 @@ public class MappingProfile : Profile
         CreateMap<Project, ProjectDto>();
 
         CreateMap<Employee, EmployeeDto>()
-            .ForCtorParam("FullName",
+            .ForMember(d => d.FullName,
             opt => opt.MapFrom(e => string.Join(' ', e.LastName, e.FirstName, e.PatronymicName)));
 
         CreateMap<ProjectEmployee, ProjectEmployeeDto>();

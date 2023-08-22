@@ -34,8 +34,11 @@ builder.Services.AddScoped<IDataShaper<EmployeeDto>, DataShaper<EmployeeDto>>();
 
 builder.Services.AddControllers(config =>
 {
+    config.RespectBrowserAcceptHeader = true;
+    config.ReturnHttpNotAcceptable = true;
     config.InputFormatters.Insert(0, GetJsonPatchInputFormatter());
-}).AddApplicationPart(typeof(ProjectManagementSystem.Presentation.AssemblyReference).Assembly);
+}).AddXmlDataContractSerializerFormatters()
+.AddApplicationPart(typeof(ProjectManagementSystem.Presentation.AssemblyReference).Assembly);
 
 var app = builder.Build();
 

@@ -5,7 +5,6 @@ using Entities.Models;
 using Service.Contracts;
 using Shared.DataTransferObjects;
 using Shared.RequestFeatures;
-using System.Dynamic;
 
 namespace Service;
 
@@ -24,7 +23,7 @@ internal sealed class EmployeeService : IEmployeeService
         _dataShaper = dataShaper;
     }
 
-    public async Task<(IEnumerable<ExpandoObject> employees, MetaData metaData)> GetAllEmployeesAsync
+    public async Task<(IEnumerable<Entity> employees, MetaData metaData)> GetAllEmployeesAsync
         (EmployeeParameters employeeParameters, bool trackChanges)
     {
         if (!employeeParameters.ValidGender)
@@ -52,7 +51,7 @@ internal sealed class EmployeeService : IEmployeeService
         return employeeDto;
     }
 
-    public async Task<(IEnumerable<ExpandoObject> employees, MetaData metaData)> GetEmployeesByProjectAsync
+    public async Task<(IEnumerable<Entity> employees, MetaData metaData)> GetEmployeesByProjectAsync
         (Guid projectId, EmployeeParameters employeeParameters, bool trackChanges)
     {
         if (!employeeParameters.ValidGender)
@@ -177,7 +176,7 @@ internal sealed class EmployeeService : IEmployeeService
         return (employees: employeeCollectionToReturn, ids);
     }
 
-    public async Task<(IEnumerable<ExpandoObject> employees, MetaData metaData)> GetEmployeesWithoutProjectAsync
+    public async Task<(IEnumerable<Entity> employees, MetaData metaData)> GetEmployeesWithoutProjectAsync
         (EmployeeParameters employeeParameters, bool trackChanges)
     {
         if (!employeeParameters.ValidGender)

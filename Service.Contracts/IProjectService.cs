@@ -1,13 +1,12 @@
 ﻿using Entities.Models;
 using Shared.DataTransferObjects;
 using Shared.RequestFeatures;
-using System.Dynamic;
 
 namespace Service.Contracts;
 
 public interface IProjectService
 {
-    Task<(IEnumerable<ExpandoObject> projects, MetaData metaData)> GetAllProjectsAsync(ProjectParameters projectParameters, bool trackChanges);
+    Task<(IEnumerable<Entity> projects, MetaData metaData)> GetAllProjectsAsync(ProjectParameters projectParameters, bool trackChanges);
     Task<ProjectDto> GetProjectAsync(Guid id, bool trackChanges);
     Task<IEnumerable<ProjectDto>> GetProjectsByEmployeeAsync(Guid employeeId, bool trackChanges);
     Task<ProjectDto> GetProjectByEmployeeAsync(Guid employeeId, Guid projectId, bool trackChanges);

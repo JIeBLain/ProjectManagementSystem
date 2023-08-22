@@ -1,6 +1,8 @@
 ﻿namespace Shared.DataTransferObjects;
 
-public record ProjectEmployeeDto(
-    ProjectDto Project,
-    EmployeeDto Employee,
-    EmployeeDto? ProjectManager = null);
+public record ProjectEmployeeDto
+{
+    public ProjectDto? Project { get; init; }
+    public EmployeeDto? Employee { get; init; }
+    public EmployeeDto? ProjectManager { get; init; } = null;
+}

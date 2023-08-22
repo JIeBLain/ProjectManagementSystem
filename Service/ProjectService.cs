@@ -5,7 +5,6 @@ using Entities.Models;
 using Service.Contracts;
 using Shared.DataTransferObjects;
 using Shared.RequestFeatures;
-using System.Dynamic;
 
 namespace Service;
 
@@ -24,7 +23,7 @@ internal sealed class ProjectService : IProjectService
         _dataShaper = dataShaper;
     }
 
-    public async Task<(IEnumerable<ExpandoObject> projects, MetaData metaData)> GetAllProjectsAsync(ProjectParameters projectParameters, bool trackChanges)
+    public async Task<(IEnumerable<Entity> projects, MetaData metaData)> GetAllProjectsAsync(ProjectParameters projectParameters, bool trackChanges)
     {
         if (!projectParameters.ValidPriorityRange)
             throw new PriorityRangeBadRequestException();
