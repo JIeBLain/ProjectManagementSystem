@@ -6,6 +6,8 @@ using Microsoft.Extensions.Options;
 using NLog;
 using ProjectManagementSystem.Extensions;
 using ProjectManagementSystem.Presentation.ActionFilters;
+using Service.DataShaping;
+using Shared.DataTransferObjects;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +28,9 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 });
 
 builder.Services.AddScoped<ValidationFilterAttribute>();
+
+builder.Services.AddScoped<IDataShaper<ProjectDto>, DataShaper<ProjectDto>>();
+builder.Services.AddScoped<IDataShaper<EmployeeDto>, DataShaper<EmployeeDto>>();
 
 builder.Services.AddControllers(config =>
 {

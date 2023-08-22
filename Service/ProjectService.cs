@@ -5,6 +5,7 @@ using Entities.Models;
 using Service.Contracts;
 using Shared.DataTransferObjects;
 using Shared.RequestFeatures;
+using System.Dynamic;
 
 namespace Service;
 
@@ -13,22 +14,26 @@ internal sealed class ProjectService : IProjectService
     private readonly IRepositoryManager _repository;
     private readonly ILoggerManager _logger;
     private readonly IMapper _mapper;
+    private readonly IDataShaper<ProjectDto> _dataShaper;
 
-    public ProjectService(IRepositoryManager repository, ILoggerManager logger, IMapper mapper)
+    public ProjectService(IRepositoryManager repository, ILoggerManager logger, IMapper mapper, IDataShaper<ProjectDto> dataShaper)
     {
         _repository = repository;
         _logger = logger;
         _mapper = mapper;
+        _dataShaper = dataShaper;
     }
 
-    public async Task<(IEnumerable<ProjectDto> projects, MetaData metaData)> GetAllProjectsAsync(ProjectParameters projectParameters, bool trackChanges)
+    public async Task<(IEnumerable<ExpandoObject> projects, MetaData metaData)> GetAllProjectsAsync(ProjectParameters projectParameters, bool trackChanges)
     {
         if (!projectParameters.ValidPriorityRange)
             throw new PriorityRangeBadRequestException();
 
         var projectsWithMetaData = await _repository.Project.GetAllProjectsAsync(projectParameters, trackChanges);
         var projectsDto = _mapper.Map<IEnumerable<ProjectDto>>(projectsWithMetaData);
-        return (projects: projectsDto, metaData: projectsWithMetaData.MetaData);
+        var shapedData = _dataShaper.ShapeData(projectsDto, projectParameters.Fields);
+
+        return (projects: shapedData, metaData: projectsWithMetaData.MetaData);
     }
 
     public async Task<ProjectDto> GetProjectAsync(Guid id, bool trackChanges)
