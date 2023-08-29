@@ -1,6 +1,4 @@
-﻿using Entities.Enums;
-
-namespace Shared.RequestFeatures;
+﻿namespace Shared.RequestFeatures;
 
 public class EmployeeParameters : RequestParameters
 {
@@ -18,11 +16,8 @@ public class EmployeeParameters : RequestParameters
             if (string.IsNullOrWhiteSpace(Gender))
                 return true;
 
-            var gender = Enum.TryParse<Gender>(Gender, true, out var result)
-                ? result
-                : default;
-
-            return Enum.IsDefined(typeof(Gender), gender);
+            return Gender.Equals("male", StringComparison.InvariantCultureIgnoreCase)
+                || Gender.Equals("female", StringComparison.InvariantCultureIgnoreCase);
         }
     }
 
