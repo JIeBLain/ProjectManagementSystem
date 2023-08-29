@@ -30,7 +30,7 @@ public class EmployeesController : ControllerBase
         return Ok(pagedResult.employees);
     }
 
-    [HttpGet("{id:guid}", Name = "EmployeeById")]
+    [HttpGet("{id:guid}", Name = nameof(GetEmployee))]
     public async Task<IActionResult> GetEmployee(Guid id)
     {
         var employee = await _service.EmployeeService.GetEmployeeAsync(id, trackChanges: false);
@@ -56,10 +56,10 @@ public class EmployeesController : ControllerBase
     public async Task<IActionResult> CreateEmployee([FromBody] EmployeeForCreationDto employee)
     {
         var createdEmployee = await _service.EmployeeService.CreateEmployeeAsync(employee);
-        return CreatedAtRoute("EmployeeById", new { id = createdEmployee.Id }, createdEmployee);
+        return CreatedAtRoute(nameof(GetEmployee), new { id = createdEmployee.Id }, createdEmployee);
     }
 
-    [HttpGet("collection/({ids})", Name = "EmployeeCollection")]
+    [HttpGet("collection/({ids})", Name = nameof(GetEmployeeCollection))]
     public async Task<IActionResult> GetEmployeeCollection([ModelBinder(BinderType = typeof(ArrayModelBinder))] IEnumerable<Guid> ids)
     {
         var employees = await _service.EmployeeService.GetByIdsAsync(ids, trackChanges: false);
@@ -71,7 +71,7 @@ public class EmployeesController : ControllerBase
     public async Task<IActionResult> CreateEmployeeCollection([FromBody] IEnumerable<EmployeeForCreationDto> employeeCollection)
     {
         var result = await _service.EmployeeService.CreateEmployeeCollectionAsync(employeeCollection);
-        return CreatedAtRoute("EmployeeCollection", new { result.ids }, result.employees);
+        return CreatedAtRoute(nameof(GetEmployeeCollection), new { result.ids }, result.employees);
     }
 
     [HttpGet("withoutProject")]

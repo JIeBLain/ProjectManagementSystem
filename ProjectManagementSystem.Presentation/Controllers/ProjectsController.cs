@@ -30,7 +30,7 @@ public class ProjectsController : ControllerBase
         return Ok(pagedResult.projects);
     }
 
-    [HttpGet("{id:guid}", Name = "ProjectById")]
+    [HttpGet("{id:guid}", Name = nameof(GetProject))]
     public async Task<IActionResult> GetProject(Guid id)
     {
         var project = await _service.ProjectService.GetProjectAsync(id, trackChanges: false);
@@ -47,14 +47,14 @@ public class ProjectsController : ControllerBase
         return Ok(pagedResult.employees);
     }
 
-    [HttpGet("{projectId:guid}/employees/{employeeId:guid}", Name = "EmployeeByProject")]
+    [HttpGet("{projectId:guid}/employees/{employeeId:guid}", Name = nameof(GetEmployeeByProject))]
     public async Task<IActionResult> GetEmployeeByProject(Guid projectId, Guid employeeId)
     {
         var employee = await _service.EmployeeService.GetEmployeeByProjectAsync(projectId, employeeId, trackChanges: false);
         return Ok(employee);
     }
 
-    [HttpGet("{projectId:guid}/projectManager", Name = "ProjectManagerByProject")]
+    [HttpGet("{projectId:guid}/projectManager", Name = nameof(GetProjectManager))]
     public async Task<IActionResult> GetProjectManager(Guid projectId)
     {
         var projectManager = await _service.EmployeeService.GetProjectManagerByProjectAsync(projectId, trackChanges: false);
@@ -66,7 +66,7 @@ public class ProjectsController : ControllerBase
     public async Task<IActionResult> CreateProject([FromBody] ProjectForCreationDto project)
     {
         var createdProject = await _service.ProjectService.CreateProjectAsync(project);
-        return CreatedAtRoute("ProjectById", new { id = createdProject.Id }, createdProject);
+        return CreatedAtRoute(nameof(GetProject), new { id = createdProject.Id }, createdProject);
     }
 
     [HttpPost("{projectId:guid}/employees")]
@@ -82,7 +82,7 @@ public class ProjectsController : ControllerBase
         var employeeToReturn = await _service.EmployeeService
             .CreateEmployeeForProjectAsync(projectId, employee, trackChanges: false);
 
-        return CreatedAtRoute("EmployeeByProject",
+        return CreatedAtRoute(nameof(GetEmployeeByProject),
             new { projectId, employeeId = employeeToReturn.Id }, employeeToReturn);
     }
 
@@ -93,11 +93,11 @@ public class ProjectsController : ControllerBase
         var projectManagerToReturn = await _service.EmployeeService
             .CreateProjectManagerForProjectAsync(projectId, projectManager, trackChanges: false);
 
-        return CreatedAtRoute("ProjectManagerByProject",
+        return CreatedAtRoute(nameof(GetProjectManager),
             new { projectId, projectManager = projectManagerToReturn.Id }, projectManagerToReturn);
     }
 
-    [HttpGet("collection/({ids})", Name = "ProjectCollection")]
+    [HttpGet("collection/({ids})", Name = nameof(GetProjectCollection))]
     public async Task<IActionResult> GetProjectCollection([ModelBinder(BinderType = typeof(ArrayModelBinder))] IEnumerable<Guid> ids)
     {
         var projects = await _service.ProjectService.GetByIdsAsync(ids, trackChanges: false);
@@ -109,7 +109,7 @@ public class ProjectsController : ControllerBase
     public async Task<IActionResult> CreateProjectCollection([FromBody] IEnumerable<ProjectForCreationDto> projectCollection)
     {
         var result = await _service.ProjectService.CreateProjectCollectionAsync(projectCollection);
-        return CreatedAtRoute("ProjectCollection", new { result.ids }, result.projects);
+        return CreatedAtRoute(nameof(GetProjectCollection), new { result.ids }, result.projects);
     }
 
     [HttpDelete("{id:guid}")]

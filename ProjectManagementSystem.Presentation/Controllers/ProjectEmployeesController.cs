@@ -28,7 +28,7 @@ public class ProjectEmployeesController : ControllerBase
         return Ok(pagedResult.projectEmployees);
     }
 
-    [HttpGet("projects/{projectId:guid}/employees/{employeeId:guid}", Name = "ProjectEmployee")]
+    [HttpGet("projects/{projectId:guid}/employees/{employeeId:guid}", Name = nameof(GetProjectEmployee))]
     public async Task<IActionResult> GetProjectEmployee(Guid projectId, Guid employeeId)
     {
         var projectEmployee = await _service.ProjectEmployeeService.GetProjectEmployeeAsync(projectId, employeeId, false);
@@ -40,6 +40,6 @@ public class ProjectEmployeesController : ControllerBase
     public async Task<IActionResult> CreateProjectEmployee([FromBody] ProjectEmployeeForCreationDto projectEmployee)
     {
         var projectEmployeeDto = await _service.ProjectEmployeeService.CreateProjectEmployeeAsync(projectEmployee, false);
-        return CreatedAtRoute("ProjectEmployee", new { projectId = projectEmployee.ProjectId, employeeId = projectEmployee.EmployeeId }, projectEmployeeDto);
+        return CreatedAtRoute(nameof(GetProjectEmployee), new { projectId = projectEmployee.ProjectId, employeeId = projectEmployee.EmployeeId }, projectEmployeeDto);
     }
 }
