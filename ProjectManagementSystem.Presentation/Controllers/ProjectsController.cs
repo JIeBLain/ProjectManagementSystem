@@ -122,7 +122,7 @@ public class ProjectsController : ControllerBase
     [HttpDelete("{projectId:guid}/employees/{employeeId:guid}")]
     public async Task<IActionResult> DeleteEmployeeForProject(Guid projectId, Guid employeeId)
     {
-        await _service.EmployeeService.DeleteProjectFromEmployeeAsync(projectId, employeeId, trackChanges: false);
+        await _service.ProjectService.DeleteEmployeeFromProjectAsync(employeeId, projectId, trackChanges: false);
         return NoContent();
     }
 

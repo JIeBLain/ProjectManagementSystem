@@ -63,6 +63,15 @@ internal sealed class ProjectService : IProjectService
         var projectEntity = _mapper.Map<Project>(project);
         _repository.Project.CreateProject(projectEntity);
 
+        Employee? projectManagerEntity = null;
+
+        if (project.ProjectManager is not null)
+        {
+            projectManagerEntity = _mapper.Map<Employee>(project.ProjectManager);
+            _repository.Employee.CreateEmployee(projectManagerEntity);
+            _repository.ProjectEmployee.CreateProjectEmployee(projectEntity.Id, projectManagerEntity.Id, projectManagerEntity.Id);
+        }
+
         if (project.Employees is not null)
         {
             var employeeEntities = _mapper.Map<IEnumerable<Employee>>(project.Employees);
@@ -70,7 +79,7 @@ internal sealed class ProjectService : IProjectService
             foreach (var employeeEntity in employeeEntities)
             {
                 _repository.Employee.CreateEmployee(employeeEntity);
-                _repository.ProjectEmployee.CreateProjectEmployee(projectEntity.Id, employeeEntity.Id, null);
+                _repository.ProjectEmployee.CreateProjectEmployee(projectEntity.Id, employeeEntity.Id, projectManagerEntity.Id);
             }
         }
 
@@ -125,20 +134,22 @@ internal sealed class ProjectService : IProjectService
         await CheckIfEmployeeExists(employeeId, trackChanges);
         _ = await GetProjectByEmployeeAndCheckIfItExists(employeeId, projectId, trackChanges);
 
-        var projectManagerDb = await _repository.ProjectEmployee.GetProjectManagerByProjectAsync(projectId, trackChanges);
-        var projectEmployeeDb = await _repository.ProjectEmployee.GetProjectEmployeeAsync(projectId, employeeId, trackChanges);
+        var projectManagerDb = await _repository.ProjectEmployee.GetProjectManagerByProjectAsync(projectId, true);
 
         if (projectManagerDb is not null && projectManagerDb.Id.Equals(employeeId))
         {
             var projectEmployees = await _repository.ProjectEmployee.GetProjectEmployeesByProjectIdAsync(projectId, true);
 
-            foreach (var pe in projectEmployees)
+            if (projectEmployees is not null)
             {
-                pe.ProjectManagerId = null;
+                foreach (var pe in projectEmployees)
+                    pe.ProjectManagerId = null;
             }
         }
 
+        var projectEmployeeDb = await _repository.ProjectEmployee.GetProjectEmployeeAsync(projectId, employeeId, true);
         _repository.ProjectEmployee.DeleteProjectEmployee(projectEmployeeDb);
+
         await _repository.SaveAsync();
     }
 

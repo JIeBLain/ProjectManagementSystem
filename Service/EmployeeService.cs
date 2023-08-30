@@ -222,23 +222,21 @@ internal sealed class EmployeeService : IEmployeeService
         await CheckIfProjectExists(projectId, trackChanges);
         _ = await GetEmployeeByProjectAndCheckIfItExists(projectId, employeeId, trackChanges);
 
-        var projectManagerDb = await _repository.ProjectEmployee.GetProjectManagerByProjectAsync(projectId, trackChanges);
+        var projectManagerDb = await _repository.ProjectEmployee.GetProjectManagerByProjectAsync(projectId, true);
 
-        if (projectManagerDb.Id.Equals(employeeId))
+        if (projectManagerDb is not null && projectManagerDb.Id.Equals(employeeId))
         {
-            var projectEmployee = await _repository.ProjectEmployee.GetProjectEmployeeAsync(projectId, employeeId, trackChanges);
-            _repository.ProjectEmployee.DeleteProjectEmployee(projectEmployee);
-        }
+            var projectEmployees = await _repository.ProjectEmployee.GetProjectEmployeesByProjectIdAsync(projectId, true);
 
-        var projectEmployees = await _repository.ProjectEmployee.GetProjectEmployeesByProjectIdAsync(projectId, true);
-
-        if (projectEmployees is not null)
-        {
-            foreach (var pe in projectEmployees)
+            if (projectEmployees is not null)
             {
-                pe.ProjectManagerId = null;
+                foreach (var pe in projectEmployees)
+                    pe.ProjectManagerId = null;
             }
         }
+
+        var projectEmployeeDb = await _repository.ProjectEmployee.GetProjectEmployeeAsync(projectId, employeeId, true);
+        _repository.ProjectEmployee.DeleteProjectEmployee(projectEmployeeDb);
 
         await _repository.SaveAsync();
     }

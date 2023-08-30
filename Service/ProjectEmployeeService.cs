@@ -56,16 +56,41 @@ public class ProjectEmployeeService : IProjectEmployeeService
 
         var projectManagerDb = await _repository.ProjectEmployee.GetProjectManagerByProjectAsync(projectEmployeeEntity.ProjectId, trackChanges);
 
-        _repository.ProjectEmployee.CreateProjectEmployee(projectEmployeeEntity.ProjectId, projectEmployeeEntity.EmployeeId, projectEmployeeEntity.ProjectManagerId);
+        ProjectEmployeeDto projectEmployeeToReturn;
+
+        if (projectManagerDb is null && projectEmployeeEntity.ProjectManagerId is not null)
+        {
+            var projectManagerEntity = await _repository.Employee.GetEmployeeAsync((Guid)projectEmployeeEntity.ProjectManagerId, trackChanges);
+
+            if (projectEmployeeEntity is not null && projectManagerEntity.Id != Guid.Empty)
+                _repository.ProjectEmployee.CreateProjectEmployee(projectEmployeeEntity.ProjectId, projectEmployeeEntity.EmployeeId, projectEmployeeEntity.ProjectManagerId);
+
+            var projectEmployees = await _repository.ProjectEmployee.GetProjectEmployeesByProjectIdAsync(projectEmployeeEntity.ProjectId, true);
+
+            foreach (var pe in projectEmployees)
+                pe.ProjectManagerId = projectEmployeeEntity.ProjectManagerId;
+
+            projectEmployeeToReturn = MapProjectEmployeeDto(projectDb, employeeDb, projectManagerEntity);
+        }
+        else
+        {
+            _repository.ProjectEmployee.CreateProjectEmployee(projectEmployeeEntity.ProjectId, projectEmployeeEntity.EmployeeId, projectManagerDb.Id);
+
+            projectEmployeeToReturn = MapProjectEmployeeDto(projectDb, employeeDb, projectManagerDb);
+        }
+
         await _repository.SaveAsync();
 
-        var projectEmployeeToReturn = new ProjectEmployeeDto
-        {
-            Project = _mapper.Map<ProjectDto>(projectDb),
-            Employee = _mapper.Map<EmployeeDto>(employeeDb),
-            ProjectManager = _mapper.Map<EmployeeDto>(projectManagerDb)
-        };
-
         return projectEmployeeToReturn;
+    }
+
+    private ProjectEmployeeDto MapProjectEmployeeDto(Project project, Employee employee, Employee projectManager)
+    {
+        return new ProjectEmployeeDto
+        {
+            Project = _mapper.Map<ProjectDto>(project),
+            Employee = _mapper.Map<EmployeeDto>(employee),
+            ProjectManager = _mapper.Map<EmployeeDto>(projectManager)
+        };
     }
 }
