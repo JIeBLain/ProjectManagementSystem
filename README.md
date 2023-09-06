@@ -17,7 +17,7 @@ Project Management System — это API проект на чистой архи
 ```
 Update-Database
 ```
-2. В командной строке заходи в корень главного проекта **ProjectManagementSystem** далее в консоле вводим команду:
+2. В командной строке заходим в корень главного проекта **ProjectManagementSystem** далее в консоле вводим команду:
 ```
 dotnet ef database update
 ```
